@@ -15,6 +15,9 @@ public abstract class FieldCreator {
     public abstract Square[][] createField();
     public abstract int getMaxLatitude();
     public abstract int getMaxLongitude();
+    public abstract int getLineOfSightLength();
+    public abstract int getNumberOfSides();
+    
     public static final Square b() {
         return new BankSquare();
     }

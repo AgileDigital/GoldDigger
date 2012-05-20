@@ -45,6 +45,16 @@ public class ResourceFieldCreator extends FieldCreator {
     public int getMaxLongitude() {
         return fieldCreator.getMaxLongitude();
     }
+    
+    @Override
+    public int getLineOfSightLength() {
+        return fieldCreator.getLineOfSightLength();
+    }
+    
+    @Override
+    public int getNumberOfSides() {
+        return fieldCreator.getNumberOfSides();
+    }
 
 	public static Fn0<FieldCreator> factory(
 			final Class<?> location) {

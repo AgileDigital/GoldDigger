@@ -33,6 +33,16 @@ public class TestFindingGold {
         public int getMaxLongitude() {
             return 3;
         }
+        
+        public int getNumberOfSides() {
+            return 4;
+        }
+        
+        public int getLineOfSightLength() {
+            return 1;
+        }
+        
+        
     }
 
     @Before

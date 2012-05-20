@@ -10,6 +10,8 @@ import com.agical.golddigger.model.Square;
 public class EmptyFieldCreator extends FieldCreator {
     private int maxLatitude; 
     private int maxLongitude;
+    private int line_of_sight_length = 1;
+    private int number_of_sides = 4;
     
     public EmptyFieldCreator(int maxLatitude, int maxLongitude) {
         this.maxLatitude = maxLatitude;
@@ -34,5 +36,15 @@ public class EmptyFieldCreator extends FieldCreator {
     }
     public int getMaxLongitude() {
         return maxLongitude;
+    }
+    
+    @Override
+    public int getLineOfSightLength() {
+        return line_of_sight_length;
+    }
+    
+    @Override
+    public int getNumberOfSides() {
+        return number_of_sides;
     }
 }

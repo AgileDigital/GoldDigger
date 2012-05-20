@@ -3,8 +3,8 @@ package com.agical.golddigger.model;
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.fieldcreator.EmptyFieldCreator;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
-import com.agical.jambda.Option;
-import com.agical.jambda.Functions.Fn1;
+import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+
 
 
 
@@ -13,9 +13,11 @@ public class GoldField {
 
     private GolddiggerNotifier golddiggerNotifier;
 
-    private int maxLatitude;
-
-    private int maxLongitude;
+    private int maxLatitude, maxLongitude;
+    
+    private int line_of_sight_length;
+    
+    private int number_of_sides;
     
     public void setGolddiggerNotifier(GolddiggerNotifier golddiggerNotifier) {
         this.golddiggerNotifier = golddiggerNotifier;
@@ -28,10 +30,13 @@ public class GoldField {
     public String toString() {
         return Square.getField(squares);
     }
+    
     public GoldField(FieldCreator fieldCreator) {
         squares = fieldCreator.createField();
         maxLatitude = fieldCreator.getMaxLatitude();
         maxLongitude = fieldCreator.getMaxLongitude();
+        line_of_sight_length = fieldCreator.getLineOfSightLength();
+        number_of_sides = fieldCreator.getNumberOfSides();
     }
 
     public int getMaxLatitude() {
@@ -43,19 +48,118 @@ public class GoldField {
     }
 
     public String getDiggerView(Digger digger) {
-        String result = "";
-        for(int deltaLat=-1;deltaLat<2;deltaLat++) {
-            for(int deltaLong=-1;deltaLong<2;deltaLong++) {
-                Position position = digger.getPosition();
-                Square square = squares[position.getLatitude()+deltaLat][position.getLongitude()+deltaLong];
-                square.viewed();
-                result += square;
-            }
-            result += '\n';
-        }
-        return result;
+        return constructDiggerView(digger);
     }
+    
+    
+    // returns the view as a String called by getDiggerView
+    // the length of the line-of-sight can be passed to this function
+    // along with the digger object
+    
+    public String constructDiggerView(Digger digger) {
+    	String view = "";
+    	String new_line = "";
+    	String view_line = "";
+    	Boolean add_view_line = false;
+    	
+    	// an array with a the same width and height of the squares
+    	// array that indicates which tiles should be visible
+    	
+		int arraySizeLength = squares.length;
+    	int arraySizeWidth = squares[0].length;
+		String[][] visibleTiles;
+		
+    	visibleTiles = new String[arraySizeLength][arraySizeWidth];
+    	
+    	// initially all tiles are invisible when view is called
+    	for (int x = 0; x < visibleTiles.length; x++) {
+			for (int y = 0; y < visibleTiles[0].length; y++) {
+				visibleTiles[x][y] = "-";
+			}
+		}
+    	
+    	Position position = digger.getPosition();
+    	int digger_lat = position.getLatitude();
+    	int digger_long = position.getLongitude();
+    	
+    	// first tile we want to check for its adjacent tiles
+    	// is the tile where the digger is currently located
+    	visibleTiles[digger_lat][digger_long] = "Check";
+    	
+    	// iterate through the visible tiles array the same number of times as the 
+    	// length of line of sight. Each time, for a tile that has been marked visible
+    	// (initially only location of the digger is visible, find its immediate adjacent
+    	// cells and make them visible. In the the next iteration identify the adjacent
+    	// tiles to those who have been determined as being visible
+    	// this will make tiles visible layer by layer to make the full extent of the
+    	// line of sight length visible
+    	int k = 0;
+    	while (k < line_of_sight_length){
+    		
+    		// those tiles which were determined to be visible in the last iteration
+    		// should now be checked to make their adjacent tiles visible
+    		for (int x = 0; x < visibleTiles.length; x++) {
+    			for (int y = 0; y < visibleTiles[0].length; y++) {
+    				if (visibleTiles[x][y] == "True") {
+    					visibleTiles[x][y] = "Check";
+    				}
+    			}    			
+    		}
+    		
+    		for (int i = 0; i < visibleTiles.length; i++) {
+    			for (int j = 0; j < visibleTiles[i].length; j++) {
+    				// check for adjacent tiles, hence "Check"
+					if (visibleTiles[i][j] == "Check") {
+    					
+    					position = new Position(i, j);
+    					markAdjacentTiles(position, visibleTiles);
+    					
+    					// now that adjacent tiles have been marked do not check this tile
+    					// again, hence "Checked"	        					
+    					visibleTiles[i][j] = "Checked";
+    				}
+    			}
+    		}
+    		k++;
+    	}
 
+    	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
+    	// array to return to the client
+    	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
+			new_line = "";
+			view_line = "";
+			add_view_line = false;
+			for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
+				// ensure that we are not out of bounds of latitude
+				if ((digger_lat + deltaLat) >= 0 && (digger_lat + deltaLat) < squares.length) {
+					// ensure that we are not out of bounds of longitude
+					if ((digger_long + deltaLong) >= 0 && (digger_long + deltaLong) < squares[0].length) {
+						int lat = digger_lat + deltaLat;
+						int longt = digger_long + deltaLong;
+						
+						// only make those tiles visible who have been marked as
+						// checked or true - the outermost layer is true, while the inner layers
+						// are checked
+						if (visibleTiles[lat][longt] == "Checked" || visibleTiles[lat][longt] == "True"){
+							Square square = squares[lat][longt];
+			    			square.viewed();
+			    			view_line += square;
+			    			new_line = "\n";
+			    			add_view_line = true;
+						} else {
+							view_line += " ";
+						}
+					}
+				}
+			}
+			// if this line of view is to be added, add it and format it with a new line character
+			if (add_view_line) {
+				view += view_line + new_line;
+			}
+		}
+    	return view;
+    }
+    
     public String getField(Digger digger) {
         String result = "";
         for(int lat=1;lat<=getMaxLatitude();lat++) {
@@ -96,5 +200,62 @@ public class GoldField {
         }
         return false;
     }
+    
+    //Calculates view of surrounding adjacent hexagon tiles of length 1
+    public void markAdjacentTiles(Position position, String[][] sightedArray){
+    	int deltaLat;
+    	int deltaLong;
 
+    	for (deltaLat = -1; deltaLat <= 1; deltaLat++) {
+        	for (deltaLong = -1; deltaLong <= 1; deltaLong++) {
+        		// make sure we are within bounds of latitude
+        		if (position.getLatitude() + deltaLat >= 0 && position.getLatitude() + deltaLat < sightedArray.length) {
+        			// make sure we are within bounds of longitude
+        			if (position.getLongitude() + deltaLong >= 0 && position.getLongitude() + deltaLong < sightedArray[0].length) {
+        				switch (number_of_sides) {
+        				case 3: // Triangle Tiles
+        					if ((position.getLongitude() % 2) == 0) {
+        						// with triangle tiles some "adjacent" tiles are invisible
+		        				if ((!(deltaLat == 1 && deltaLong == 1)) && (!(deltaLat == 1 && deltaLong == -1))) {
+		        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
+		        						sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+		        					}
+		        				}
+		        			} else if ((position.getLongitude() % 2) == 1) {
+		        				if ((!(deltaLat == -1 && deltaLong == -1)) && (!(deltaLat == -1 && deltaLong == 1))) {
+		        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
+		        						sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+		        					}
+		        				}
+		        			}
+        					break;
+        					
+        				case 4: // Square tiles	
+        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
+		        				sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+		        			}
+        					break;
+        					
+        				case 6:// Hexagon Tiles
+        					if ((position.getLongitude() % 2) == 1) {
+        						// with trinangle tiles some "adjacent" tiles are invisible
+			        			if (!(deltaLat == -1 && deltaLong == -1) && !(deltaLat == -1 && deltaLong == 1)) {
+			        				if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
+			        					sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+			        				}
+			        			}
+		        			} else if ((position.getLongitude() % 2) == 0) {
+		        				if (!(deltaLat == 1 && deltaLong == 1) && !(deltaLat == 1 && deltaLong == -1)) {
+		        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
+		        						sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+		        					}
+			        			}
+		        			}
+        					break;		
+        				}
+        			}        			 
+        		}	
+        	}
+    	}
+    }
 }

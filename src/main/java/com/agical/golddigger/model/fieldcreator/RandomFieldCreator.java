@@ -17,6 +17,8 @@ public class RandomFieldCreator extends FieldCreator {
     private final int maxLongitude;
     private int startLatitude = 1;
     private int startLongitude = 1;
+    private int line_of_sight_length = 1;
+    private int number_of_sides = 4;
     private final int nrOfGoldItems;
     private final int nrOfWalls;
     private static final Fn4<Integer, Integer, Integer, Integer, List<Square>> create_available = new Fn4<Integer, Integer, Integer, Integer, List<Square>>() {
@@ -102,6 +104,16 @@ public class RandomFieldCreator extends FieldCreator {
     @Override
     public int getMaxLongitude() {
         return maxLongitude;
+    }
+    
+    @Override
+    public int getLineOfSightLength() {
+        return line_of_sight_length;
+    }
+    
+    @Override
+    public int getNumberOfSides() {
+        return number_of_sides;
     }
     
     private List<Square> getAvailable() {
