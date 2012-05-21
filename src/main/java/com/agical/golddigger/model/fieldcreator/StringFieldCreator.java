@@ -31,10 +31,16 @@ public class StringFieldCreator extends FieldCreator {
         return getSquares();
     }
     
-    // the field file or field string is divided into sections
-    // that contain the map and its attributes
-    // this method will return an attribute value (if it exists)
-    // when given an attribute name
+    
+    /**
+     * Returns the attribute value for a given attribute name
+     * The attributes are located in the .field file and this method
+     * searches the contents of the file and returns the value if the
+     * the attribute exists
+     * 
+     * @param attribute_name
+     * @return attribute value
+     */
     private String extractAttributeValue(String attribute_name) {
     	String[] attribute_sections;
     	String attribute_value = "not_found";
@@ -68,8 +74,10 @@ public class StringFieldCreator extends FieldCreator {
         return squares;
     }
     
-    // return the length of line of sight which determines the radius
-    // of the view of the digger in a specific map
+    /**
+     * Returns the line of sight length from the field file
+     * If not found, will set it to the default line of sight length
+     */
     public int getLineOfSightLength() {
     	int line_of_sight_length = default_line_of_sight_length;
     	String raw_line_of_sight_length = extractAttributeValue("line_of_sight_length=");
@@ -85,8 +93,11 @@ public class StringFieldCreator extends FieldCreator {
     	return line_of_sight_length;
     }
     
-    // this determines the shape of tiles based on the number of sides defined in the
-    // filed file for a specific map
+    /**
+     * Returns the number of sides for tile from the field file
+     * If not found, will set and return and return the number of sides
+     * to the default as defined in this class
+     */
     public int getNumberOfSides() {
     	int number_of_sides = default_no_of_sides; //default shape of tiles is square
     	String raw_number_of_sides = extractAttributeValue("number_of_sides=");

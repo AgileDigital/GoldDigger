@@ -52,10 +52,14 @@ public class GoldField {
     }
     
     
-    // returns the view as a String called by getDiggerView
-    // the length of the line-of-sight can be passed to this function
-    // along with the digger object
-    
+   /**
+    * Constructs a view based on the line of sight length and tile shapes
+    * The view will be centred around the digger
+    * 
+    * @param digger
+    * @return view as a String that will be sent to the client via HTTP
+    */
+        
     public String constructDiggerView(Digger digger) {
     	String view = "";
     	String new_line = "";
@@ -86,14 +90,14 @@ public class GoldField {
     	// is the tile where the digger is currently located
     	visibleTiles[digger_lat][digger_long] = "Check";
     	
-    	// iterate through the visible tiles array the same number of times as the 
-    	// length of line of sight. Each time, for a tile that has been marked visible
-    	// (initially only location of the digger is visible, find its immediate adjacent
-    	// cells and make them visible. In the the next iteration identify the adjacent
-    	// tiles to those who have been determined as being visible
-    	// this will make tiles visible layer by layer to make the full extent of the
-    	// line of sight length visible
+    	
+    	
+    	
+    	
     	int k = 0;
+    	
+    	// iterate through the visible tiles array the same number of times as the
+		// length of line of sight.
     	while (k < line_of_sight_length){
     		
     		// those tiles which were determined to be visible in the last iteration
@@ -112,6 +116,7 @@ public class GoldField {
 					if (visibleTiles[i][j] == "Check") {
     					
     					position = new Position(i, j);
+    					// mark all the adjacent tiles to this tile as visible
     					markAdjacentTiles(position, visibleTiles);
     					
     					// now that adjacent tiles have been marked do not check this tile
@@ -201,7 +206,14 @@ public class GoldField {
         return false;
     }
     
-    //Calculates view of surrounding adjacent hexagon tiles of length 1
+    /**
+     * Finds the immediately adjacent tiles to the tile that is passed to it as position
+     * Adjacency differs for different tile shapes and also 
+     * whether the tile is in an odd column in the field or an even column
+     * 
+     * @param position of the tile which we want to find its adjacent tiles
+     * @param sightedArray which indicates which tiles should be visible to the digger
+     */
     public void markAdjacentTiles(Position position, String[][] sightedArray){
     	int deltaLat;
     	int deltaLong;
