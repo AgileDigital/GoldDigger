@@ -217,49 +217,57 @@ public class GoldField {
     public void markAdjacentTiles(Position position, String[][] sightedArray){
     	int deltaLat;
     	int deltaLong;
-
+    	
+    	int lat = position.getLatitude();
+    	int lng = position.getLongitude();
+    			
+    	
+    	
     	for (deltaLat = -1; deltaLat <= 1; deltaLat++) {
-        	for (deltaLong = -1; deltaLong <= 1; deltaLong++) {
-        		// make sure we are within bounds of latitude
-        		if (position.getLatitude() + deltaLat >= 0 && position.getLatitude() + deltaLat < sightedArray.length) {
+    		
+    		// make sure we are within bounds of latitude
+    		if (lat + deltaLat >= 0 && lat + deltaLat < sightedArray.length) {
+    			
+    			for (deltaLong = -1; deltaLong <= 1; deltaLong++) {
+        		        		
         			// make sure we are within bounds of longitude
-        			if (position.getLongitude() + deltaLong >= 0 && position.getLongitude() + deltaLong < sightedArray[0].length) {
+        			if (lng + deltaLong >= 0 && lng + deltaLong < sightedArray[0].length) {
         				switch (number_of_sides) {
         				case 3: // Triangle Tiles
-        					if ((position.getLongitude() % 2) == 0) {
+        					if ((lng % 2) == 0) {
         						// with triangle tiles some "adjacent" tiles are invisible
 		        				if ((!(deltaLat == 1 && deltaLong == 1)) && (!(deltaLat == 1 && deltaLong == -1))) {
-		        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
-		        						sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+		        					if (sightedArray[lat + deltaLat][lng + deltaLong] == "-") {
+		        						sightedArray[lat + deltaLat][lng + deltaLong] = "True";
 		        					}
 		        				}
-		        			} else if ((position.getLongitude() % 2) == 1) {
+		        			} else if ((lng % 2) == 1) {
 		        				if ((!(deltaLat == -1 && deltaLong == -1)) && (!(deltaLat == -1 && deltaLong == 1))) {
-		        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
-		        						sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+		        					if (sightedArray[lat + deltaLat][lng + deltaLong] == "-") {
+		        						sightedArray[lat + deltaLat][lng + deltaLong] = "True";
 		        					}
 		        				}
 		        			}
         					break;
         					
         				case 4: // Square tiles	
-        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
-		        				sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+        					if (sightedArray[lat + deltaLat][lng + deltaLong] == "-") {
+		        				sightedArray[lat + deltaLat][lng + deltaLong] = "True";
 		        			}
         					break;
         					
         				case 6:// Hexagon Tiles
-        					if ((position.getLongitude() % 2) == 1) {
+        					if ((lng % 2) == 1) {
         						// with trinangle tiles some "adjacent" tiles are invisible
 			        			if (!(deltaLat == -1 && deltaLong == -1) && !(deltaLat == -1 && deltaLong == 1)) {
-			        				if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
-			        					sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+			        				if (sightedArray[lat + deltaLat][lng + deltaLong] == "-") {
+			        					sightedArray[lat + deltaLat][lng + deltaLong] = "True";
 			        				}
 			        			}
-		        			} else if ((position.getLongitude() % 2) == 0) {
+		        			} else if ((lng % 2) == 0) {
 		        				if (!(deltaLat == 1 && deltaLong == 1) && !(deltaLat == 1 && deltaLong == -1)) {
-		        					if (sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] == "-") {
-		        						sightedArray[position.getLatitude() + deltaLat][position.getLongitude() + deltaLong] = "True";
+		        					if (sightedArray[lat + deltaLat][lng + deltaLong] == "-") {
+		        						sightedArray[lat + deltaLat][lng + deltaLong] = "True";
 		        					}
 			        			}
 		        			}

@@ -126,7 +126,7 @@ public class StringFieldCreator extends FieldCreator {
 			Integer.parseInt(input);
 			return true;
 		} 
-		catch(Exception e){
+		catch(NumberFormatException nfe){
 			return false;
 		}
     }
