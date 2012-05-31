@@ -3,10 +3,6 @@ package com.agical.golddigger.model;
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.fieldcreator.EmptyFieldCreator;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
-import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
-
-
-
 
 public class GoldField {
     private Square[][] squares;
@@ -16,7 +12,6 @@ public class GoldField {
     private int maxLatitude, maxLongitude;
     
     private int line_of_sight_length;
-    
     private int number_of_sides;
     
     public void setGolddiggerNotifier(GolddiggerNotifier golddiggerNotifier) {
@@ -25,6 +20,10 @@ public class GoldField {
 
     public GoldField(int maxLatitude, int maxLongitude) {
         this(new EmptyFieldCreator(maxLatitude, maxLongitude));
+    }
+    public GoldField(int maxLatitude, int maxLongitude,int numberOfSides) {
+        this(new EmptyFieldCreator(maxLatitude, maxLongitude));
+        this.number_of_sides = numberOfSides;
     }
     @Override
     public String toString() {
@@ -38,7 +37,8 @@ public class GoldField {
         line_of_sight_length = fieldCreator.getLineOfSightLength();
         number_of_sides = fieldCreator.getNumberOfSides();
     }
-
+    
+    
     public int getMaxLatitude() {
         return maxLatitude;
     }
@@ -169,7 +169,6 @@ public class GoldField {
         String result = "";
         for(int lat=1;lat<=getMaxLatitude();lat++) {
             for(int lon=1;lon<=getMaxLongitude();lon++) {
-                Position position = digger.getPosition();
                 result += squares[lat][lon];
             }
             result += "\n";
@@ -220,8 +219,6 @@ public class GoldField {
     	
     	int lat = position.getLatitude();
     	int lng = position.getLongitude();
-    			
-    	
     	
     	for (deltaLat = -1; deltaLat <= 1; deltaLat++) {
     		
@@ -277,5 +274,10 @@ public class GoldField {
         		}	
         	}
     	}
+    }
+    	
+
+    public int getNumberOfSides(){
+    	return number_of_sides;
     }
 }

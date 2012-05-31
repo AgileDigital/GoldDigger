@@ -42,7 +42,6 @@ public class TestFindingGold {
             return 1;
         }
         
-        
     }
 
     @Before

@@ -76,5 +76,20 @@ public class WebController {
     public WebResponse moveEast() {
         return call("http://localhost:" + port + "/golddigger/digger/" + secretName + "/move/east", serverSleep);
     }
+    public WebResponse moveNorthEast() {
+        return call("http://localhost:" + port + "/golddigger/digger/" + secretName + "/move/north_east", serverSleep);
+    }
+
+    public WebResponse moveSouthEast() {
+        return call("http://localhost:" + port + "/golddigger/digger/" + secretName + "/move/south_east", serverSleep);
+    }
+
+    public WebResponse moveNorthWest() {
+        return call("http://localhost:" + port + "/golddigger/digger/" + secretName + "/move/north_west", serverSleep);
+    }
+    
+    public WebResponse moveSouthWest() {
+        return call("http://localhost:" + port + "/golddigger/digger/" + secretName + "/move/south_west", serverSleep);
+    }
 
 }

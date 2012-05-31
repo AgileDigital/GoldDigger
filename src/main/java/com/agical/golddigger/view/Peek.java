@@ -14,11 +14,21 @@ public class Peek {
 	private final Square[][] piece;
 	private final Position position;
 	private final Rectangle bounds;
+	final static double hexXDistance = 3.0/1.85;	//Determines the x Distance between the tiles
+	final static double hexYDistance = 2.0; 		//Determines the y Distance between the tiles.
+	final static double hexR = 21.0;
+	private int numberOfSides = 4;
+	final static double hexH = Math.sqrt(3.0)*hexR/2.0;	
 
 	public Peek(Square[][] piece, Position position, Rectangle bounds) {
 		this.piece = piece;
 		this.position = position;
 		this.bounds = bounds;
+	}
+	
+	public Peek(Square[][] piece, Position position, Rectangle bounds, int numberOfSides) {
+		this(piece, position, bounds);
+		this.numberOfSides = numberOfSides;
 	}
 	
 	public Rectangle getBounds() {
@@ -45,12 +55,21 @@ public class Peek {
 	private void diggerPosition(PeekView peekView) {
 		int x = position.getLongitude() - bounds.getX1();
 		int y = position.getLatitude() - bounds.getY1();
+		if(numberOfSides == 6){
+			y = hexY(x,y, bounds.getX1());
+			x = hexX(x);
+		}
 		peekView.drawDigger(x,y);
 	}
 
 	private void drawSquare(int x, int y, PeekView peekView) {
 		Square thisSquare = piece[y][x];
 		String srep = thisSquare.getStringRepresentation();
+		
+		if(numberOfSides == 6){
+			y = hexY(x,y, bounds.getX1());
+			x = hexX(x);			
+		}
 		if(srep.equals(Square.wall().getStringRepresentation()))  {
 			drawWall(x,y, peekView);
 		}
@@ -104,6 +123,20 @@ public class Peek {
 	private Square getSquare(int x, int y) {
 		if (x < 0 || x >= piece[0].length || y < 0 || y >= piece.length) return Square.wall();
 		else return piece[y][x];
+	}
+	
+	//offsets the X co-ordinates for 6 sided tiles.
+	public static int hexX (double x){
+		return (int) Math.round(hexXDistance * x * hexR);
+	}
+	
+	//Offsets the Y co-ordinate for 6 sided tiles.
+	public static int hexY (double x, double y, int c){
+		if (c%2 == 0){
+			return (int) Math.round((hexYDistance*y) * hexH + (x % 2) * hexH + hexH);
+		} else {
+			return (int) Math.round((hexYDistance*y) * hexH + ((x+1) % 2) * hexH);				
+		}
 	}
 	
 	private static Fn1<Square, Boolean> WALL = new Fn1<Square, Boolean>(){

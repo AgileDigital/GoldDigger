@@ -52,6 +52,11 @@ public class FieldView extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
+		if(fieldPeek.getDigger().getGoldField().getNumberOfSides() == 4){				
+			GraphicsPeekView.changeTileSetBasedOnSides(4);
+		} else if(fieldPeek.getDigger().getGoldField().getNumberOfSides() == 6){
+			GraphicsPeekView.changeTileSetBasedOnSides(6);
+		}
 		super.paint(g);
 		fieldPeek.getPeek().drawTo(new GraphicsPeekView(g, this));
 	}

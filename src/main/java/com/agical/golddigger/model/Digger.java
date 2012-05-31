@@ -131,6 +131,12 @@ public class Digger {
     
     public synchronized Option<Position> move(Fn1<Position,Position> move) {
         Position newPosition = move.apply(getPosition());
+        //Makes sure that east and west doesn't get updated when 6 sided
+        if(goldField.getNumberOfSides() == 6 && (Position.EAST.equals(move) || 
+           Position.WEST.equals(move))){
+        	return Option.<Position>none();
+        }
+        
         if(goldField.isTreadable(newPosition)) {
             setPosition(newPosition);
             update();

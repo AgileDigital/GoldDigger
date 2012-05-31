@@ -43,7 +43,7 @@ public class FieldPeek {
 			}
 		}
 		
-		return new Peek(result, new Position(position.getLatitude()-deltaY, position.getLongitude()-deltaX), bounds);
+		return new Peek(result, new Position(position.getLatitude()-deltaY, position.getLongitude()-deltaX), bounds, digger.getGoldField().getNumberOfSides());
 	}
 
 	private Rectangle createBounds(Position position, int fieldWith,
@@ -54,7 +54,7 @@ public class FieldPeek {
 		int maxY = Math.min(fieldHeight, minY + height); 
 		Rectangle bounds = new Rectangle(
 				      adjustMinimum(minX, maxX, width),
-				      adjustMinimum(minY, maxY, height),
+				      adjustMinimum(minY, maxY, height-1),
 					  maxX,
 					  maxY);
 		return bounds;
@@ -62,8 +62,12 @@ public class FieldPeek {
 
 	private int adjustMinimum(int min, int max, int desiredSize) {
 		int deltaX = max - min;
-		if (deltaX < desiredSize) min = Math.max(min -= (desiredSize-deltaX), 0);
+		if (deltaX < desiredSize) min = Math.max(min - (desiredSize-deltaX), 0);
 		return min;
+	}
+	
+	public Digger getDigger(){
+		return this.digger;
 	}
 
 }

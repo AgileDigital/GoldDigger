@@ -9,11 +9,15 @@ import java.net.URL;
 import com.agical.golddigger.view.PeekView;
 
 public class GraphicsPeekView implements PeekView {
+	private static int numberOfSides = 4;
 
 	private static Image loadImage(String name) {
 		URL url = FieldView.class.getResource("/images/"+name); 
 		return Toolkit.getDefaultToolkit().getImage(url);
 	}
+
+	private static Image hexImage2 = loadImage("hexWall.png");
+	
 	private static Image GOLD1 = loadImage("gold1.png");
 	private static Image GOLD2 = loadImage("gold2.png");
 	private static Image GOLD3 = loadImage("gold3.png");
@@ -24,8 +28,18 @@ public class GraphicsPeekView implements PeekView {
 	private static Image GOLD8 = loadImage("gold8.png");
 	private static Image GOLD9 = loadImage("gold9.png");
 	
-	private static Image BANK = loadImage("bank.png");
-	private static Image SHADE = loadImage("shade.png");
+	private static Image HEXGOLD1 = loadImage("hexGold1.png");
+	private static Image HEXGOLD2 = loadImage("hexGold2.png");
+	private static Image HEXGOLD3 = loadImage("hexGold3.png");
+	private static Image HEXGOLD4 = loadImage("hexGold4.png");
+	private static Image HEXGOLD5 = loadImage("hexGold5.png");
+	private static Image HEXGOLD6 = loadImage("hexGold6.png");
+	private static Image HEXGOLD7 = loadImage("hexGold7.png");
+	private static Image HEXGOLD8 = loadImage("hexGold8.png");
+	private static Image HEXGOLD9 = loadImage("hexGold9.png");
+	
+	private static Image BANK;
+	private static Image SHADE;
 	
 	private static Image[] golds = new Image[]{GOLD1, GOLD2, GOLD3, GOLD4, GOLD5, GOLD6, GOLD7, GOLD8, GOLD9};
 	
@@ -55,6 +69,52 @@ public class GraphicsPeekView implements PeekView {
 	public GraphicsPeekView(Graphics graphics, ImageObserver imageObserver) {
 		this.graphics = graphics;
 		this.imageObserver = imageObserver;
+	}
+	
+	public static void changeTileSetBasedOnSides(int newNumberOfSides){
+		numberOfSides = newNumberOfSides;
+		if(numberOfSides == 4){			
+		    BANK = loadImage("square_bank.png");
+			SHADE = loadImage("shade square.png");
+			DIGGER = loadImage("digger.png");
+			EMPTY = loadImage("empty.png");
+			golds = new Image[]{GOLD1, GOLD2, GOLD3, GOLD4, GOLD5, GOLD6, GOLD7, GOLD8, GOLD9};
+			  W_CENTER =  loadImage("center.png");
+			  SOLID =  loadImage("solid.png");
+			  W_NORTH =  loadImage("w_north.png");
+			  W_NORTHEAST =  loadImage("w_northeast.png");
+			  W_NORTHEAST_INVERTED =  loadImage("w_northeast_i.png");
+			  W_EAST =  loadImage("w_east.png");
+			  W_SOUTHEAST =  loadImage("w_southeast.png");
+			  W_SOUTHEAST_INVERTED =  loadImage("w_southeast_i.png");
+			  W_SOUTH =  loadImage("w_south.png");
+			  W_SOUTHWEST =  loadImage("w_southwest.png");
+			  W_SOUTHWEST_INVERTED =  loadImage("w_southwest_i.png");
+			  W_WEST =  loadImage("w_west.png");
+			  W_NORTHWEST =  loadImage("w_northwest.png");
+			  W_NORTHWEST_INVERTED =  loadImage("w_northwest_i.png");
+		}
+		else if (numberOfSides == 6){
+			BANK = loadImage("hexbank.png");
+			SHADE = loadImage("shade.png");
+			DIGGER = loadImage("digger.png");
+		    EMPTY = loadImage("hexEmpty.png");
+			golds = new Image []{HEXGOLD1, HEXGOLD2, HEXGOLD3, HEXGOLD4, HEXGOLD5, HEXGOLD6, HEXGOLD7, HEXGOLD8, HEXGOLD9};
+			  W_CENTER = loadImage("hexWall.png");
+			  SOLID = hexImage2;
+			  W_NORTH = hexImage2;
+			  W_NORTHEAST = hexImage2;
+			  W_NORTHEAST_INVERTED = hexImage2;
+			  W_EAST = hexImage2;
+			  W_SOUTHEAST = hexImage2;
+			  W_SOUTHEAST_INVERTED = hexImage2;
+			  W_SOUTH = hexImage2;
+			  W_SOUTHWEST = hexImage2;
+			  W_SOUTHWEST_INVERTED = hexImage2;
+			  W_WEST = hexImage2;
+			  W_NORTHWEST = hexImage2;
+			  W_NORTHWEST_INVERTED = hexImage2;
+		}
 	}
 
 	@Override
@@ -113,7 +173,11 @@ public class GraphicsPeekView implements PeekView {
 	}
 
 	private boolean drawImage(int x, int y, Image image) {
-		return graphics.drawImage(image, x*32, y*32, imageObserver);
+		if(this.numberOfSides == 4){
+			return graphics.drawImage(image, x*32, y*32, imageObserver);
+		} else {
+			return graphics.drawImage(image, x, y, imageObserver);
+		}
 	}
 
 	@Override
