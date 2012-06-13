@@ -59,6 +59,15 @@ public class GraphicsPeekView implements PeekView {
 	private static Image W_WEST = loadImage("w_west.png");
 	private static Image W_NORTHWEST = loadImage("w_northwest.png");
 	private static Image W_NORTHWEST_INVERTED = loadImage("w_northwest_i.png");
+
+	private static Image CITY;
+	private static Image DEEP_WATER;
+	private static Image FOREST;
+	private static Image HILL;
+	private static Image MOUNTAIN;
+	private static Image ROAD;
+	private static Image SHALLOW_WATER;
+	private static Image TELEPORT;
 	
 
 	
@@ -78,6 +87,14 @@ public class GraphicsPeekView implements PeekView {
 			SHADE = loadImage("shade square.png");
 			DIGGER = loadImage("digger.png");
 			EMPTY = loadImage("empty.png");
+			CITY = loadImage("city.png");
+			DEEP_WATER = loadImage("deep_water.png");
+			FOREST = loadImage("forest.png");
+			HILL = loadImage("hill.png");
+			MOUNTAIN = loadImage("mountain.png");
+			ROAD = loadImage("road.png");
+			SHALLOW_WATER = loadImage("shallow_water.png");
+			TELEPORT = loadImage("teleport.png");
 			golds = new Image[]{GOLD1, GOLD2, GOLD3, GOLD4, GOLD5, GOLD6, GOLD7, GOLD8, GOLD9};
 			  W_CENTER =  loadImage("center.png");
 			  SOLID =  loadImage("solid.png");
@@ -99,6 +116,14 @@ public class GraphicsPeekView implements PeekView {
 			SHADE = loadImage("shade.png");
 			DIGGER = loadImage("digger.png");
 		    EMPTY = loadImage("hexEmpty.png");
+		    CITY = loadImage("hex_city.png");
+			DEEP_WATER = loadImage("hex_deep_water.png");
+			FOREST = loadImage("hex_forest.png");
+			HILL = loadImage("hex_hill.png");
+			MOUNTAIN = loadImage("hex_mountain.png");
+			ROAD = loadImage("hex_road.png");
+			SHALLOW_WATER = loadImage("hex_shallow_water.png");
+			TELEPORT = loadImage("hex_teleport.png");
 			golds = new Image []{HEXGOLD1, HEXGOLD2, HEXGOLD3, HEXGOLD4, HEXGOLD5, HEXGOLD6, HEXGOLD7, HEXGOLD8, HEXGOLD9};
 			  W_CENTER = loadImage("hexWall.png");
 			  SOLID = hexImage2;
@@ -173,7 +198,7 @@ public class GraphicsPeekView implements PeekView {
 	}
 
 	private boolean drawImage(int x, int y, Image image) {
-		if(this.numberOfSides == 4){
+		if(numberOfSides == 4){
 			return graphics.drawImage(image, x*32, y*32, imageObserver);
 		} else {
 			return graphics.drawImage(image, x, y, imageObserver);
@@ -219,6 +244,46 @@ public class GraphicsPeekView implements PeekView {
     @Override
     public void drawBank(int x, int y) {
     	drawImage(x, y, BANK);
+    }
+    
+    @Override
+    public void drawCity(int x, int y) {
+    	drawImage(x, y, CITY);
+    }
+    
+    @Override
+    public void drawDeepWater(int x, int y) {
+    	drawImage(x, y, DEEP_WATER);
+    }
+    
+    @Override
+    public void drawHill(int x, int y) {
+    	drawImage(x, y, HILL);
+    }
+    
+    @Override
+    public void drawMountain(int x, int y) {
+    	drawImage(x, y, MOUNTAIN);
+    }
+    
+    @Override
+    public void drawRoad(int x, int y) {
+    	drawImage(x, y, ROAD);
+    }
+    
+    @Override
+    public void drawShallowWater(int x, int y) {
+    	drawImage(x, y, SHALLOW_WATER);
+    }
+    
+    @Override
+    public void drawTeleport(int x, int y) {
+    	drawImage(x, y, TELEPORT);
+    }
+    
+    @Override
+    public void drawForest(int x, int y) {
+    	drawImage(x, y, FOREST);
     }
 
 }

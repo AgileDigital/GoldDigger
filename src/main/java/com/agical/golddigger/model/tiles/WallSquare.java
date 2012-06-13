@@ -1,4 +1,4 @@
-package com.agical.golddigger.model;
+package com.agical.golddigger.model.tiles;
 
 public class WallSquare extends Square {
 

@@ -1,4 +1,6 @@
-package com.agical.golddigger.model;
+package com.agical.golddigger.model.tiles;
+
+import com.agical.golddigger.model.Digger;
 
 public class BankSquare extends Square {
     

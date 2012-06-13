@@ -1,107 +1,55 @@
 package com.agical.golddigger.model.fieldcreator;
 
-import com.agical.golddigger.model.Square;
+import java.util.HashMap;
 
+import com.agical.golddigger.model.tiles.Square;
+
+/** Uses field definitions defined as Strings to create a field.
+ * @author Brett Wandel
+ */
 public class StringFieldCreator extends FieldCreator {
-    
-	private static final String MAP_INFO_MARKER = "!\n";
+	public static final String DELIMITER = "!", SEPERATOR = "=";
     private static final int WALLS = 2;
     private final String result;
     private Square[][] squares;
-    private String[] result_sections;
     
-    // constants for defining default values
-    private final int default_no_of_sides = 4;
-    private final int default_line_of_sight_length = 1;
+	public final static String TILES = "field-tiles",
+							   COSTS = "cost-per-type",
+							   LINE_OF_SIGHT = "line-of-sight",
+							   NO_OF_SIDES   = "number-of-sides";
+	
+    private static final int DEFAULT_NUMBER_OF_SIDES = 4,
+    						 DEFAULT_LINE_OF_SIGHT   = 1;
     
-    public StringFieldCreator(String result) {
-    	String default_settings = "";
-        this.result = result;
-        
-        // if the field file or the field string does not contain
-        // attributes, then add default attributes
-        if (!result.contains("!")) {
-        	default_settings = "!line_of_sight_length=" + default_line_of_sight_length + "\n!number_of_sides=" + default_no_of_sides + "\n!map=\n";
-        	result = default_settings + result;
-        }
-                
-        result_sections = result.split("!");
-    }
+	public StringFieldCreator(String result) {
+		this.result = result;
+	}
 
-    public Square[][] createField() {
-        return getSquares();
-    }
-    
-    
-    /**
-     * Returns the attribute value for a given attribute name
-     * The attributes are located in the .field file and this method
-     * searches the contents of the file and returns the value if the
-     * the attribute exists
-     * 
-     * @param attribute_name
-     * @return attribute value
-     */
-    private String extractAttributeValue(String attribute_name) {
-    	String[] attribute_sections;
-    	String attribute_value = "not_found";
-    	
-    	for (String result_section : result_sections) {
-    		if (result_section.indexOf(attribute_name) >= 0) {
-    			attribute_sections = result_section.split(attribute_name);
-    			attribute_value = attribute_sections[1];
-    			return attribute_value;
-    		}
-    	}
-    	
-    	return attribute_value;
-    }
-
-    private Square[][] getSquares() {
-    	String map = extractAttributeValue("map=\n");
-    	if(squares!=null) return squares;
-        String[] rows = map.split("\n");
-    	
-        
-        //This if statement when integrated with the movement cost 
-        //code will need to be changed depending on how we will define the
-        //map info and the map String's placement in the .field file.
-        //Right now  this if statement is used to just get the default
-        //MapString ( the one without the movement costs).
-        if(result.contains(MAP_INFO_MARKER)){
-        	rows = (result.split(MAP_INFO_MARKER)) [2].split("\n");
-        }
-    	
-        squares = new Square[rows.length][];
-        for (int rowCount = 0; rowCount<rows.length; rowCount++) {
-            String charRow = rows[rowCount];
-            Square[] squareRow = new Square[charRow.length()];
-            squares[rowCount] = squareRow;
-            for (int i = 0; i < charRow.length(); i++) {
-                char squareChar = charRow.charAt(i);
-                squareRow[i] = Square.createFromChar(squareChar); 
-            }
-        }
-        return squares;
-    }
+	/**
+	 * Takes the string given to the constructor and returns the tiles.
+	 */
+	public Square[][] createField() {
+		if (result.contains(DELIMITER)){
+			squares = parseFieldWithSections();
+		} else {
+			squares = createSquares(result);
+		}
+		return squares;
+	}
     
     /**
      * Returns the line of sight length from the field file
      * If not found, will set it to the default line of sight length
      */
     public int getLineOfSightLength() {
-    	int line_of_sight_length = default_line_of_sight_length;
-    	String raw_line_of_sight_length = extractAttributeValue("line_of_sight_length=");
-    	raw_line_of_sight_length = raw_line_of_sight_length.replace("\n", ""); 
-    	    	   	
-    	if (isInteger(raw_line_of_sight_length)) {
-    		line_of_sight_length = Integer.parseInt(raw_line_of_sight_length);
-    		if (line_of_sight_length < 1) {
-    			line_of_sight_length = default_line_of_sight_length;
-    		}
+    	String value = getAttribute(LINE_OF_SIGHT);
+    	if (value == null) return DEFAULT_LINE_OF_SIGHT;
+    	try {
+    		return Integer.parseInt(value);
+    	} catch (NumberFormatException e){
+    		e.printStackTrace();
+    		return DEFAULT_LINE_OF_SIGHT;
     	}
-    	        	    	
-    	return line_of_sight_length;
     }
     
     /**
@@ -110,35 +58,146 @@ public class StringFieldCreator extends FieldCreator {
      * to the default as defined in this class
      */
     public int getNumberOfSides() {
-    	int number_of_sides = default_no_of_sides; //default shape of tiles is square
-    	String raw_number_of_sides = extractAttributeValue("number_of_sides=");
-    	raw_number_of_sides = raw_number_of_sides.replace("\n", ""); 
-    	    	   	
-    	if (isInteger(raw_number_of_sides)) {
-    		number_of_sides = Integer.parseInt(raw_number_of_sides);
-    		if (number_of_sides < 3) { // a tile must have at least 3 sides
-    			number_of_sides = default_no_of_sides; // however, if it is given a number less than 3 in the field file, then it should go back to default (square)
-    		}
+    	String value = getAttribute(NO_OF_SIDES);
+    	if (value == null) return DEFAULT_NUMBER_OF_SIDES;
+    	try {
+    		return Integer.parseInt(value);
+    	} catch (NumberFormatException e){
+    		e.printStackTrace();
+    		return DEFAULT_NUMBER_OF_SIDES;
     	}
-    	        	    	
-    	return number_of_sides;
     }
-    
-    public int getMaxLatitude() {
-        return getSquares().length-WALLS;
-    }
-    
-    public int getMaxLongitude() {
-        return getSquares()[0].length-WALLS;
-    }
-        
-    public static boolean isInteger(String input){
-		try{
-			Integer.parseInt(input);
-			return true;
-		} 
-		catch(NumberFormatException nfe){
-			return false;
+
+	/**
+	 * Parses the field from the string stored at result.
+	 * note: the string must contain the TILES section
+	 * 
+	 * @return The 2d array of squares that make up a field.
+	 */
+	private Square[][] parseFieldWithSections() {
+		if (!result.contains(TILES)) {
+			throw new RuntimeException("Tried to parse a map that has a delimiter, but does not contain a \""+DELIMITER+TILES+"\" section.");
 		}
-    }
+		String typesSection;
+		String[] tiles = null;
+		HashMap<Character,Integer> types = null;
+		
+		typesSection = getSection(COSTS);
+		if (typesSection != null) { types = convertCosts(typesSection);}
+		
+		tiles = getSection(TILES).split("\n");
+		Square[][] field = new Square[tiles.length][tiles[0].length()];
+		
+		int x=0,y=0;
+		for (String row : tiles){
+			for (char c : row.toCharArray()){
+				field[y][x] = Square.createFromChar(c);
+				if (c != 'w' && types != null){
+					int cost = -1;
+					if (types.containsKey(c)){
+						cost = Integer.parseInt(types.get(c)+"");
+					}
+					if (cost >=0) { field[y][x].setCost(cost); }
+				}
+				x++;
+			}
+			x = 0;
+			y++;
+		}
+		return field;
+	}
+	
+	/**
+	 * Builds a field of squares from a string
+	 * The field must have more than 3 rows.
+	 * 
+	 * This is method assumes no extra information is included in the string, just the map tiles.
+	 * @param field_str The string representation of the field
+	 * @return The field of Squares
+	 */
+	private Square[][] createSquares(String field_str){
+		String[] rows = field_str.split("\n");
+		if (rows.length < 3) return null;
+		Square[][] field = new Square[rows.length][];
+		
+		int x=0,y=0; //Cartesian coordinates
+		for (String row : rows){
+			field[y] = new Square[row.length()];
+			for (char tile : row.toCharArray()){
+				field[y][x] = Square.createFromChar(tile);
+				x++;
+			}
+			x=0;
+			y++;
+		}
+		return field;
+	}
+
+
+	/**
+	 *  Parses the types section and returns a hash of the tile types and their costs.
+	 * @param section The section to parse for types.
+	 * @return The HashMap.
+	 */
+	private HashMap<Character, Integer> convertCosts(String section) {
+		HashMap<Character, Integer> costs = new HashMap<Character,Integer>();
+		if (section == null) return costs;
+		
+		String[] lines = section.split("\n");
+		for (String line : lines) {
+			if (line.contains(SEPERATOR)){
+				int index = line.indexOf(SEPERATOR);
+				char key = line.substring(0,index).trim().charAt(0);
+				Integer value = Integer.parseInt(line.substring(index+1).trim());
+				costs.put(key, value);
+			}
+		}
+		return (costs.isEmpty() ? null: costs);
+	}
+
+	private Square[][] getSquares() {
+		if (squares == null) createField();
+		return squares;
+	}
+
+	public int getMaxLatitude() {
+		return getSquares().length - WALLS;
+	}
+
+	public int getMaxLongitude() {
+		return getSquares()[0].length - WALLS;
+	}
+
+	/** 
+	 * parses the "results" variable to retrieve a particular section.
+	 * The start of a new section is denoted with the DELIMITER
+	 * @param title The section name, with out the delimiter to look for.
+	 * @return The String between the section name and the next delimiter
+	 */
+	public String getSection(String title){
+		if (!result.contains(DELIMITER+title)) {
+			return null;
+		}
+		
+		int start = result.indexOf(title)+title.length();
+		int end = result.indexOf(DELIMITER, start);
+
+		String value;
+		if (end == -1) value = result.substring(start);
+		else value = result.substring(start, end);
+		
+		return value.trim();
+	}
+	
+	/**
+	 * Returns an attribute in result.
+	 * expected format "!title = ???".
+	 * @param title the name of the attribute
+	 * @return the value of the attribute
+	 */
+	public String getAttribute(String title){
+		String result = getSection(title);
+		if (result == null) return null;
+		else return result.substring(result.indexOf(SEPERATOR)+1).trim();
+	}
 }

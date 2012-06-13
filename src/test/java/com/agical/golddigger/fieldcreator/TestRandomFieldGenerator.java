@@ -6,7 +6,7 @@ import static com.agical.golddigger.model.fieldcreator.FieldCreator.*;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.RandomFieldCreator;
 

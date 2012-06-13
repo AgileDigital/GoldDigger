@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.agical.golddigger.model.Digger;
 import com.agical.golddigger.model.GoldField;
 import com.agical.golddigger.model.Position;
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.jambda.Option;
 

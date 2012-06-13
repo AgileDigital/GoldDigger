@@ -38,5 +38,21 @@ public interface PeekView {
 
 	void drawBank(int x, int y);
 
-        void drawShadow(int x, int y);
+    void drawShadow(int x, int y);
+
+	void drawCity(int x, int y);
+
+	void drawDeepWater(int x, int y);
+
+	void drawHill(int x, int y);
+
+	void drawMountain(int x, int y);
+
+	void drawRoad(int x, int y);
+
+	void drawShallowWater(int x, int y);
+
+	void drawTeleport(int x, int y);
+
+	void drawForest(int x, int y);
 }

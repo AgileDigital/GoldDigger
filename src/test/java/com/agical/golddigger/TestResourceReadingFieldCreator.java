@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.ResourceFieldCreator;
 

@@ -119,4 +119,60 @@ public class PeekViewStub implements PeekView {
 	public void drawBank(int x, int y) {
 		draw(x, y, "B");
 	}
+
+
+	@Override
+	public void drawCity(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void drawDeepWater(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void drawHill(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void drawMountain(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void drawRoad(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void drawShallowWater(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void drawTeleport(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void drawForest(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
 }

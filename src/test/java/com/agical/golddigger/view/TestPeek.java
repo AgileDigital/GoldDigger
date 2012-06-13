@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.Rectangle;
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.Square;
 
 public class TestPeek {
 

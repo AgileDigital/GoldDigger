@@ -2,7 +2,7 @@ package com.agical.golddigger.model.fieldcreator;
 
 import java.net.URL;
 
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.jambda.Functions.Fn0;
 
 /**

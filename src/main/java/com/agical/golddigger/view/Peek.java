@@ -2,8 +2,8 @@ package com.agical.golddigger.view;
 
 import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.Rectangle;
-import com.agical.golddigger.model.Square;
-import com.agical.golddigger.model.WallSquare;
+import com.agical.golddigger.model.tiles.Square;
+import com.agical.golddigger.model.tiles.WallSquare;
 import com.agical.jambda.Unit;
 import com.agical.jambda.Functions.Fn1;
 import static com.agical.jambda.Booleans.*;
@@ -79,8 +79,23 @@ public class Peek {
 		else if (Character.isDigit(srep.charAt(0))) {
 			char ch = srep.charAt(0);
 			drawGold(x, y, ch-'0', peekView);
-		}
-		else {
+		} else if(srep.equals("c")){
+			peekView.drawCity(x, y);
+		} else if(srep.equals("d")){
+			peekView.drawDeepWater(x, y);
+		} else if(srep.equals("h")){
+			peekView.drawHill(x, y);
+		} else if(srep.equals("m")){
+			peekView.drawMountain(x, y);
+		} else if(srep.equals("r")){
+			peekView.drawRoad(x, y);
+		} else if(srep.equals("s")){
+			peekView.drawShallowWater(x, y);
+		} else if(srep.equals("t")){
+			peekView.drawTeleport(x, y);
+		} else if(srep.equals("f")){
+			peekView.drawForest(x, y);
+		} else {
 			peekView.drawEmpty(x,y);
 		}
 		// orkade inte funktionalisera

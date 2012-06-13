@@ -3,6 +3,9 @@ package com.agical.golddigger.model;
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.fieldcreator.EmptyFieldCreator;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
+import com.agical.golddigger.model.tiles.Square;
+import com.agical.jambda.Option;
+import com.agical.jambda.Functions.Fn1;
 
 public class GoldField {
     private Square[][] squares;

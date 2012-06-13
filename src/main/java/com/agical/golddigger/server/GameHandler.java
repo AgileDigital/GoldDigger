@@ -49,17 +49,13 @@ public class GameHandler extends HttpServlet {
         String sync = "defaultSyncstring";
         if (splitPath.length > 2) sync = splitPath[2];
         try {
-            boolean isExecuting = true;
-            while (isExecuting) {
-                synchronized (executingSecrets) {
-                    if(executingSecrets.contains(sync)) {
-                        isExecuting = true;
-                    } else {
-                        isExecuting = false;
-                        executingSecrets.add(sync);
-                    }
+            synchronized (executingSecrets) {
+                if(executingSecrets.contains(sync)) {
+                    resp.sendError(503);
+                    return;                        
+                } else {
+                   executingSecrets.add(sync);
                 }
-                if(isExecuting) Thread.sleep(50);
             }
             synchronized(sync) {
                 long sleep = 100;

@@ -3,6 +3,7 @@
  */
 package com.agical.golddigger.model;
 
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.jambda.Functions;
 import com.agical.jambda.Functions.Fn1;
 import com.agical.jambda.Functions.Fn2;

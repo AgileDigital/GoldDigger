@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.agical.golddigger.model.BankSquare;
-import com.agical.golddigger.model.GoldSquare;
-import com.agical.golddigger.model.Square;
-import com.agical.golddigger.model.WallSquare;
+import com.agical.golddigger.model.tiles.BankSquare;
+import com.agical.golddigger.model.tiles.GoldSquare;
+import com.agical.golddigger.model.tiles.Square;
+import com.agical.golddigger.model.tiles.WallSquare;
 import com.agical.jambda.Functions.Fn4;
 
 
@@ -32,10 +32,14 @@ public class RandomFieldCreator extends FieldCreator {
                 int gold = (int) Math.min((Math.random()*9)+1, goldLeft);
                 goldLeft = goldLeft-gold;
                 nrOfGoldSquares++;
-                available.add(new GoldSquare(gold));
+                GoldSquare newGoldSquare = new GoldSquare(gold);
+                newGoldSquare.setCost((int)(Math.random()*10));
+                available.add(newGoldSquare);
             }
             for(int i = 0; i < (maxLatitude2*maxLongitude2)-nrOfGoldSquares-nrOfWalls2-oneForTheBank; i++) {
-                available.add(Square.empty());
+            	Square emptySquare = Square.empty();
+            	emptySquare.setCost((int)(Math.random()*10));
+                available.add(emptySquare);
             }
             for(int i = 0; i < nrOfWalls2; i++) {
                 available.add(new WallSquare());

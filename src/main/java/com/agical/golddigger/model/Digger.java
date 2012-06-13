@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.agical.golddigger.model.event.GolddiggerNotifier;
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.jambda.Functions;
 import com.agical.jambda.Option;
 import com.agical.jambda.Unit;
@@ -14,6 +15,8 @@ import com.agical.jambda.Functions.Fn2;
 
 
 public class Digger {
+	public final static long BASE_MOVEMENT_TIME = 200; // measured in milliseconds
+	
     private Position position = new Position(1, 1);
     private int carrying;
     private int cashed;
@@ -45,8 +48,11 @@ public class Digger {
 
     @Override
     public String toString() {
-        return "Digger[position=" + getPosition() + "][carrying=" + carrying  + "][cashed=" + cashed  + "][name=" + name +"]\n" +
-        "Field:\n" + goldField;
+        return "Digger[position=" + getPosition() + "]"+
+        		"[carrying=" + carrying  + "]"+
+        		"[cashed=" + cashed  + "]"+
+        		"[name=" + name +"]\n" +
+        		"Field:\n" + goldField;
     }
     public String getName() {
         return name;
@@ -140,6 +146,15 @@ public class Digger {
         if(goldField.isTreadable(newPosition)) {
             setPosition(newPosition);
             update();
+			Square t = goldField.getSquare(position);
+			double scale = ((double)t.getCost())/100;
+			/* Move cost delay: sleep to delay the web response */
+			try {
+				Thread.sleep((long) (BASE_MOVEMENT_TIME * scale));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
             return Option.some(getPosition());
         } else {
             return Option.<Position>none();

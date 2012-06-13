@@ -4,7 +4,7 @@ import java.io.StringWriter;
 
 import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.Rectangle;
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
 
 public class PeekTools {

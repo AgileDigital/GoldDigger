@@ -3,8 +3,8 @@
  */
 package com.agical.golddigger.model.fieldcreator;
 
-import com.agical.golddigger.model.BankSquare;
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.BankSquare;
+import com.agical.golddigger.model.tiles.Square;
 
 
 public class EmptyFieldCreator extends FieldCreator {

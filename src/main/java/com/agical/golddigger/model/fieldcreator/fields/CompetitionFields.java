@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import com.agical.golddigger.model.Square;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.RandomFieldCreator;
 import com.agical.golddigger.model.fieldcreator.ResourceFieldCreator;
+import com.agical.golddigger.model.tiles.Square;
 import com.agical.jambda.Functions.Fn0;
 
 public class CompetitionFields {

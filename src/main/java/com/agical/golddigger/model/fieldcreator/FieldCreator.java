@@ -6,9 +6,9 @@ package com.agical.golddigger.model.fieldcreator;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.agical.golddigger.model.BankSquare;
-import com.agical.golddigger.model.GoldSquare;
-import com.agical.golddigger.model.Square;
+import com.agical.golddigger.model.tiles.BankSquare;
+import com.agical.golddigger.model.tiles.GoldSquare;
+import com.agical.golddigger.model.tiles.Square;
 
 
 public abstract class FieldCreator {

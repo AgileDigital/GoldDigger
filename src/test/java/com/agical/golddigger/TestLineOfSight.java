@@ -9,9 +9,9 @@ import org.junit.Test;
 import com.agical.golddigger.model.Digger;
 import com.agical.golddigger.model.GoldField;
 import com.agical.golddigger.model.Position;
-import com.agical.golddigger.model.Square;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+import static com.agical.golddigger.model.fieldcreator.StringFieldCreator.*;
 
 public class TestLineOfSight {
 	private FieldCreator fieldCreator;
@@ -41,7 +41,9 @@ public class TestLineOfSight {
     // Test sight view for the centre
     
     private String createSetting(int los_length, int no_of_sides) {
-    	return "!line_of_sight_length=" + los_length + "\n!number_of_sides=" + no_of_sides + "\n!map=\n";
+    	return DELIMITER+LINE_OF_SIGHT+" "+SEPERATOR +" "+ los_length + "\n"+
+    			DELIMITER+NO_OF_SIDES+" "+SEPERATOR+" "+ no_of_sides + "\n"+
+    			DELIMITER+TILES+"\n";
     }
     @Test
     public void centreSquareSightView_1() throws Exception {
