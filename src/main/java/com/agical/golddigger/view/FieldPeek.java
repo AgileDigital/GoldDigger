@@ -43,7 +43,7 @@ public class FieldPeek {
 			}
 		}
 		
-		return new Peek(result, new Position(position.getLatitude()-deltaY, position.getLongitude()-deltaX), bounds, digger.getGoldField().getNumberOfSides());
+		return new Peek(result, new Position(position.getLatitude()-deltaY, position.getLongitude()-deltaX), bounds, digger.getGoldField().getNumberOfSides(),-deltaX);
 	}
 
 	private Rectangle createBounds(Position position, int fieldWith,
