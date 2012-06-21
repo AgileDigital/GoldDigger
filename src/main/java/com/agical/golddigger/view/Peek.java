@@ -18,6 +18,7 @@ public class Peek {
 	final static double hexYDistance = 2.0; 		//Determines the y Distance between the tiles.
 	final static double hexR = 21.0;
 	private int numberOfSides = 4;
+	private int extraLeftWalls = 0;          //Used to offset the extra walls added to the left of the map when re-sizing the window
 	final static double hexH = Math.sqrt(3.0)*hexR/2.0;	
 
 	public Peek(Square[][] piece, Position position, Rectangle bounds) {
@@ -26,9 +27,10 @@ public class Peek {
 		this.bounds = bounds;
 	}
 	
-	public Peek(Square[][] piece, Position position, Rectangle bounds, int numberOfSides) {
+	public Peek(Square[][] piece, Position position, Rectangle bounds, int numberOfSides, int extraLeftWalls) {
 		this(piece, position, bounds);
 		this.numberOfSides = numberOfSides;
+		this.extraLeftWalls = extraLeftWalls;
 	}
 	
 	public Rectangle getBounds() {
@@ -56,7 +58,11 @@ public class Peek {
 		int x = position.getLongitude() - bounds.getX1();
 		int y = position.getLatitude() - bounds.getY1();
 		if(numberOfSides == 6){
-			y = hexY(x,y, bounds.getX1());
+			if(extraLeftWalls > 0){
+				y = hexY(x,y, bounds.getX1()+extraLeftWalls);
+			} else {
+				y = hexY(x,y, bounds.getX1());
+			}
 			x = hexX(x);
 		}
 		peekView.drawDigger(x,y);
@@ -67,7 +73,11 @@ public class Peek {
 		String srep = thisSquare.getStringRepresentation();
 		
 		if(numberOfSides == 6){
-			y = hexY(x,y, bounds.getX1());
+			if(extraLeftWalls > 0){
+				y = hexY(x,y, bounds.getX1()+extraLeftWalls);
+			} else {
+				y = hexY(x,y, bounds.getX1());
+			}
 			x = hexX(x);			
 		}
 		if(srep.equals(Square.wall().getStringRepresentation()))  {
