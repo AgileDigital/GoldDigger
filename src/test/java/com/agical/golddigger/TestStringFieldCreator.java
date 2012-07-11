@@ -13,6 +13,7 @@ import com.agical.golddigger.model.tiles.Square;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.RandomFieldCreator;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+import com.agical.golddigger.plugins.DayNightPlugin;
 
 
 public class TestStringFieldCreator {
@@ -41,8 +42,8 @@ public class TestStringFieldCreator {
     	Square[][] squares;
     	final String TILES = "www\nwbw\nw.w\nw9w\nwww";
     	final String PER_TYPES = "b=8\n9=3";
-    	final String TILES_HEADER    = DELIMITER + StringFieldCreator.TILES      + "\n";
-    	final String PER_TYPE_HEADER = DELIMITER + StringFieldCreator.COSTS + "\n";
+    	final String TILES_HEADER    = section(StringFieldCreator.TILES);
+    	final String PER_TYPE_HEADER = section(StringFieldCreator.COSTS);
     	
     	// Test No Sections
     	field = TILES;
@@ -67,12 +68,12 @@ public class TestStringFieldCreator {
     // Testing that the cost is parsed properly 
     public void testCosts(){
     	final String FIELD =
-    			DELIMITER + StringFieldCreator.TILES + "\n" +
-    			"wwwwww\n" +
-    			"w..b.w\n" +
-    			"wwwwww\n" +
-    			DELIMITER + StringFieldCreator.COSTS + "\n" +
-    			"b=2";
+    			section(TILES)+
+    				"wwwwww\n" +
+    				"w..b.w\n" +
+    				"wwwwww\n" +
+    			section(COSTS)+
+    			sectionValue("b", "2");
     	FieldCreator fc = new StringFieldCreator(FIELD);
     	Square[][] field = fc.createField();
     	assertEquals("Default cost is wrong",100,field[1][1].getCost());
@@ -83,32 +84,32 @@ public class TestStringFieldCreator {
     @Test
     // Testing how the StringFieldFactory retrieves "sections" from the "result" string.
     public void testGetSection(){
-    	final String SECTION = DELIMITER+"field-tiles+\n\n\n\n\nwww\nw.w\nwww\n\n\n\n";
+    	final String SECTION = section(TILES)+"\n\n\n\nwww\nw.w\nwww\n\n\n\n";
     	StringFieldCreator scf = new StringFieldCreator(SECTION);
-    	String section = scf.getSection("field-tiles");
+    	String section = scf.getSection(TILES);
     	assertFalse("The newlines weren't trimed of the start",section.startsWith("\n"));
     	assertFalse("The newlines weren't trimed of the end",section.endsWith("\n"));
 
-    	final String TILES = "www\nwbw\nw.w\nw9w\nwww";
-    	final String PER_TYPES = "b=8\n9=3";
-    	String field =  DELIMITER + StringFieldCreator.TILES      + "\n" + TILES +"\n";
-    	field = field + DELIMITER + StringFieldCreator.COSTS + "\n" + PER_TYPES +"\n";
+    	final String tiles = "www\nwbw\nw.w\nw9w\nwww";
+    	final String pertypes = (sectionValue("b","8")+sectionValue("9","3")).trim();
+    	String field =  section(TILES) + tiles +"\n";
+    	field = field + section(COSTS)+ pertypes +"\n";
     	
     	StringFieldCreator sfc = new StringFieldCreator(field);
-    	assertEquals("The field tile section was not seperated correctly", TILES,     sfc.getSection(StringFieldCreator.TILES));
-    	assertEquals("The types cost section was not seperated correctly", PER_TYPES, sfc.getSection(StringFieldCreator.COSTS));
+    	assertEquals("The field tile section was not seperated correctly", tiles,    sfc.getSection(TILES));
+    	assertEquals("The types cost section was not seperated correctly", pertypes, sfc.getSection(COSTS));
     }
     
     @Test
     public void testMaxLatLong(){
 		String string_map = 
-				DELIMITER+LINE_OF_SIGHT+SEPERATOR+"3\n" +
-				DELIMITER+NO_OF_SIDES+SEPERATOR+"6\n" +
-				DELIMITER+TILES+ "\n" +
-				"wwwww\n" +
-				"wbw.w\n" +
-				"w1w.w\n" +
-				"wwwww\n";
+				attribute(LINE_OF_SIGHT,3) +
+				attribute(NO_OF_SIDES,6)+
+				section(TILES) +
+					"wwwww\n" +
+					"wbw.w\n" +
+					"w1w.w\n" +
+					"wwwww\n";
 		
         Digger digger = new Digger("Diggers name", "secretName");
         digger.newGame(new GoldField(new StringFieldCreator(string_map)));
@@ -119,5 +120,24 @@ public class TestStringFieldCreator {
 		assertEquals("max height of the map is wrong",2, digger.getGoldField().getMaxLatitude());
 		assertEquals("max width of the map is wrong",3, digger.getGoldField().getMaxLongitude());
 		assertFalse("hasGold is calculated wrong",digger.getGoldField().hasGold());
+    }
+    
+    
+    @Test
+    public void testPlugins(){
+    	String str = 
+    			section(TILES)+
+    				"www\nw.w\nwww\n"+
+    			section(PLUGINS)+
+    				DayNightPlugin.NAME;
+    	
+    	Digger digger = new Digger("Diggers name", "secretName");
+        digger.newGame(new GoldField(new StringFieldCreator(str)));
+        
+        PluginService service = digger.getGoldField().getPluginService();
+        System.out.println();
+        assertNotNull(service);
+        assertTrue(service.getPlugins().hasNext());
+        assertTrue(service.getPlugins().next() instanceof DayNightPlugin);
     }
 }

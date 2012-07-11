@@ -1,6 +1,7 @@
 package com.agical.golddigger.model;
 
 
+import com.agical.golddigger.PluginService;
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.fieldcreator.EmptyFieldCreator;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
@@ -9,6 +10,8 @@ import com.agical.jambda.Option;
 import com.agical.jambda.Functions.Fn1;
 
 public class GoldField {
+	private PluginService pluginService;
+	
     private Square[][] squares;
 
     private GolddiggerNotifier golddiggerNotifier;
@@ -45,6 +48,7 @@ public class GoldField {
         maxLongitude = fieldCreator.getMaxLongitude();
         line_of_sight_length = fieldCreator.getLineOfSightLength();
         number_of_sides = fieldCreator.getNumberOfSides();
+        pluginService = fieldCreator.getPluginService();
     }
     
     
@@ -90,7 +94,6 @@ public class GoldField {
     	visibleTiles = new String[arraySizeLength][arraySizeWidth];
 		unoccludedTiles = new String[arraySizeLength][arraySizeWidth];
 		
-    	
     	
     	// initially all tiles are invisible when view is called
     	for (int x = 0; x < visibleTiles.length; x++) {
@@ -345,14 +348,27 @@ public class GoldField {
     	}
     }
     	
-    public int getLineOfSightLength()
-    {
-    	return line_of_sight_length;
-    }
-    
+
     public int getNumberOfSides(){
     	return number_of_sides;
     }
+    
+    public int getLOS(){
+    	return line_of_sight_length;
+    }
+    
+    public void setLOS(int los){
+    	line_of_sight_length = los;
+    }
+
+	public PluginService getPluginService() {
+		return pluginService;
+	}
+
+	public void setPluginService(PluginService pluginService) {
+		this.pluginService = pluginService;
+	}
+    
     
   //Occlusion Functions
   	private  String[][] checkOcclusion(Digger digger, String[][] unoccludedTiles)
@@ -803,11 +819,4 @@ public class GoldField {
   	{
   		System.out.println("(" + x + ", " + y + ")");
   	}
-
-  }
-
-
-
-
-
-
+}

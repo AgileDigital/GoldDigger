@@ -22,7 +22,7 @@ public class TestMoveCosts {
 	@Test
 	public void testDefaults() {
 		String string_map = 
-				DELIMITER+TILES+ "\n" +
+				section(TILES)+
 				"wwwwwww\n" +
 				"wbtsdhw\n" +
 				"w.frcmw\n" +
@@ -46,8 +46,8 @@ public class TestMoveCosts {
 	@Test
 	public void testDefaultsHex() {
 		String string_map = 
-				DELIMITER+NO_OF_SIDES+" "+SEPERATOR+" 6\n" +
-				DELIMITER+TILES+ "\n" +
+				attribute(NO_OF_SIDES,6)+
+				section(TILES)+
 				"wwwwwww\n" +
 				"wbtsdhw\n" +
 				"w.frcmw\n" +
@@ -72,12 +72,12 @@ public class TestMoveCosts {
 	@Test
 	public void testOveriding(){
 		String string_map = 
-				DELIMITER+TILES+ "\n" +
+				section(TILES)+
 				"wwwwwww\n" +
 				"wbtsdhw\n" +
 				"w.frcmw\n" +
 				"wwwwwww\n" +
-				DELIMITER+COSTS+"\n"+
+				section(COSTS)+
 				"t=400\n"+
 				"s=1000\n"+
 				"d=250";

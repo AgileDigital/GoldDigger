@@ -2,6 +2,7 @@ package com.agical.golddigger.model.fieldcreator;
 
 import java.net.URL;
 
+import com.agical.golddigger.PluginService;
 import com.agical.golddigger.model.tiles.Square;
 import com.agical.jambda.Functions.Fn0;
 
@@ -64,5 +65,10 @@ public class ResourceFieldCreator extends FieldCreator {
 				return new ResourceFieldCreator(location);
 			}
 		};
+	}
+	
+	@Override
+	public PluginService getPluginService(){
+		return fieldCreator.getPluginService();
 	}
 }

@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
 
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.tiles.Square;
+import com.agical.golddigger.plugins.api.FieldUpdatePlugin;
+import com.agical.golddigger.plugins.api.GoldDiggerPlugin;
 import com.agical.jambda.Functions;
 import com.agical.jambda.Option;
 import com.agical.jambda.Unit;
@@ -15,6 +18,7 @@ import com.agical.jambda.Functions.Fn2;
 
 
 public class Digger {
+	
 	public final static long BASE_MOVEMENT_TIME = 200; // measured in milliseconds
 	
     private Position position = new Position(1, 1);
@@ -82,6 +86,16 @@ public class Digger {
     
     private void update() {
         golddiggerNotifier.map(updateListeners.apply(this), Functions.<Unit>constantly(Unit.unit));
+
+        if (goldField.getPluginService() != null){
+        	Iterator<GoldDiggerPlugin> plugins = goldField.getPluginService().getPlugins();
+        	while (plugins.hasNext()){
+        		GoldDiggerPlugin plugin = plugins.next();
+        		if (plugin instanceof FieldUpdatePlugin){
+        			((FieldUpdatePlugin) plugin).update(goldField);
+        		}
+        	}
+        }
     }
 
     public Position getPosition() {
@@ -146,6 +160,7 @@ public class Digger {
         if(goldField.isTreadable(newPosition)) {
             setPosition(newPosition);
             update();
+            
 			Square t = goldField.getSquare(position);
 			double scale = ((double)t.getCost())/100;
 			/* Move cost delay: sleep to delay the web response */
@@ -154,7 +169,7 @@ public class Digger {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
+			
             return Option.some(getPosition());
         } else {
             return Option.<Position>none();

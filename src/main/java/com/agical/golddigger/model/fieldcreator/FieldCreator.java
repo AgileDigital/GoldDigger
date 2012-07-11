@@ -6,6 +6,7 @@ package com.agical.golddigger.model.fieldcreator;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.agical.golddigger.PluginService;
 import com.agical.golddigger.model.tiles.BankSquare;
 import com.agical.golddigger.model.tiles.GoldSquare;
 import com.agical.golddigger.model.tiles.Square;
@@ -62,4 +63,7 @@ public abstract class FieldCreator {
         }
         return treadableFields;
     }
+	public PluginService getPluginService() {
+		return null;
+	}
 }

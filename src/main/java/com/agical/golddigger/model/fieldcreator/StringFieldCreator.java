@@ -1,8 +1,13 @@
 package com.agical.golddigger.model.fieldcreator;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
+import com.agical.golddigger.PluginService;
+import com.agical.golddigger.PluginServiceFactory;
 import com.agical.golddigger.model.tiles.Square;
+import com.agical.golddigger.plugins.DayNightPlugin;
+import com.agical.golddigger.plugins.api.GoldDiggerPlugin;
 
 /** Uses field definitions defined as Strings to create a field.
  * @author Brett Wandel
@@ -12,11 +17,13 @@ public class StringFieldCreator extends FieldCreator {
     private static final int WALLS = 2;
     private final String result;
     private Square[][] squares;
+	private PluginService pluginService;
     
 	public final static String TILES = "field-tiles",
 							   COSTS = "cost-per-type",
 							   LINE_OF_SIGHT = "line-of-sight",
-							   NO_OF_SIDES   = "number-of-sides";
+							   NO_OF_SIDES   = "number-of-sides",
+							   PLUGINS = "plugins";
 	
     private static final int DEFAULT_NUMBER_OF_SIDES = 4,
     						 DEFAULT_LINE_OF_SIGHT   = 1;
@@ -31,13 +38,56 @@ public class StringFieldCreator extends FieldCreator {
 	public Square[][] createField() {
 		if (result.contains(DELIMITER)){
 			squares = parseFieldWithSections();
+			pluginService = parsePlugins();
 		} else {
 			squares = createSquares(result);
 		}
 		return squares;
 	}
     
-    /**
+    private PluginService parsePlugins() {
+    	String pluginSection = getSection(PLUGINS);
+    	if (pluginSection == null) return null;
+    	
+    	PluginService pluginService = PluginServiceFactory.createPluginService();
+    	Iterator<GoldDiggerPlugin> plugins = pluginService.getPlugins();
+    	
+    	while(plugins.hasNext()){
+    		GoldDiggerPlugin plugin = plugins.next();
+    		if (!pluginSection.contains(plugin.getName())){
+    			plugins.remove();
+    		} else {
+    			if (plugin instanceof DayNightPlugin){
+    				String cycleTime = getAttribute(DayNightPlugin.CYCLE_TIME);
+    				String losScale = getAttribute(DayNightPlugin.LOS_SCALE);
+    				if (cycleTime != null){
+    					DayNightPlugin p = (DayNightPlugin) plugin;
+    					try {
+    						int i = Integer.parseInt(cycleTime);
+    						p.setCycleTime(i);
+    					} catch (NumberFormatException nfe){
+    						nfe.printStackTrace();
+    						//TODO Need to do something here
+    					}
+    				}
+    				if (losScale != null){
+    					DayNightPlugin p = (DayNightPlugin) plugin;
+    					try {
+    						int i = Integer.parseInt(losScale);
+    						p.setLOSScale(i);
+    					} catch (NumberFormatException nfe){
+    						nfe.printStackTrace();
+    						//TODO Need to do something here
+    					}
+    				}
+    			}
+    		}
+    	}
+    	
+		return pluginService;
+	}
+
+	/**
      * Returns the line of sight length from the field file
      * If not found, will set it to the default line of sight length
      */
@@ -78,6 +128,7 @@ public class StringFieldCreator extends FieldCreator {
 		if (!result.contains(TILES)) {
 			throw new RuntimeException("Tried to parse a map that has a delimiter, but does not contain a \""+DELIMITER+TILES+"\" section.");
 		}
+
 		String typesSection;
 		String[] tiles = null;
 		HashMap<Character,Integer> types = null;
@@ -199,5 +250,20 @@ public class StringFieldCreator extends FieldCreator {
 		String result = getSection(title);
 		if (result == null) return null;
 		else return result.substring(result.indexOf(SEPERATOR)+1).trim();
+	}
+	
+	@Override
+	public PluginService getPluginService(){
+		return pluginService;
+	}
+	
+	public static String section(String name){
+		return DELIMITER+name+"\n";
+	}
+	public static String sectionValue(String name, String value){
+		return name+SEPERATOR+value+"\n";
+	}
+	public static String attribute(String name, int i){
+		return DELIMITER+name+SEPERATOR+i+"\n";
 	}
 }
