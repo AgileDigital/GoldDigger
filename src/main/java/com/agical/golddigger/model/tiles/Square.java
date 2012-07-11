@@ -10,6 +10,8 @@ public abstract class Square {
 	 * moves onto this tile. Should be be 0 or higher.
 	 */
 	private int moveCost = 100;
+	private int occlusionRadius = 0;
+	private int occlusionCost = 0;
 
 	public static String getField(Square[][] createField) {
 		String result = "";
@@ -99,5 +101,25 @@ public abstract class Square {
 
 	public int getCost() {
 		return moveCost;
+	}
+	
+	public void setRadius(int newRadius) {
+		if (newRadius >= 0) {
+			occlusionRadius = newRadius;
+		}
+	}
+
+	public int getRadius() {
+		return occlusionRadius;
+	}
+	
+	public void setOcclusionCost(int newCost){
+		if (newCost >= 0) {
+			occlusionCost = newCost;
+		}
+	}
+	
+	public int getOcclusionCost(){
+		return occlusionCost;
 	}
 }

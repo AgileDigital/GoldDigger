@@ -27,15 +27,23 @@ public class TestLineOfSight {
     	
         fieldCreator = new StringFieldCreator(createSetting(1, 4) + map);
         square_1 = new GoldField(fieldCreator);
+        square_1.toggleDiggercentreingTo(false);
+        square_1.toggleOcclusionTo(false);
         
         fieldCreator = new StringFieldCreator(createSetting(2, 4) + map);
         square_2 = new GoldField(fieldCreator);
+        square_2.toggleDiggercentreingTo(false);
+        square_2.toggleOcclusionTo(false);
         
         fieldCreator = new StringFieldCreator(createSetting(1, 6) + map);
         hexagon_1 = new GoldField(fieldCreator);
+        hexagon_1.toggleDiggercentreingTo(false);
+        hexagon_1.toggleOcclusionTo(false);
         
         fieldCreator = new StringFieldCreator(createSetting(2, 6) + map);
         hexagon_2 = new GoldField(fieldCreator);
+        hexagon_2.toggleDiggercentreingTo(false);
+        hexagon_2.toggleOcclusionTo(false);
     }
     
     // Test sight view for the centre
@@ -164,15 +172,15 @@ public class TestLineOfSight {
     }
     
     
-    // Test cases for hexagon tiles
-    
+    // Test cases for Centreing the digger
+    @Test
     public void centreHexagonSightView_1() throws Exception {
     	digger = new Digger("Diggers name", "secretName");
         digger.newGame(hexagon_1);
         
         Position startPosition = new Position(2,2);
         digger.setPosition(startPosition);
-        assertEquals( "...\n.b.\n . \n", digger.getView());
+        assertEquals( "...\n.b.\n?.?\n", digger.getView());
         
     }
     
@@ -183,19 +191,19 @@ public class TestLineOfSight {
         
         Position startPosition = new Position(1,2); 
         digger.setPosition(startPosition);
-        assertEquals( "www\n...\n b \n", digger.getView());
+        assertEquals( "www\n...\n?b?\n", digger.getView());
            
         startPosition = new Position(2,1);
         digger.setPosition(startPosition);
-        assertEquals( " . \nw.b\nw..\n", digger.getView());
+        assertEquals( "?.?\nw.b\nw..\n", digger.getView());
         
         startPosition = new Position(3,2);
         digger.setPosition(startPosition);
-        assertEquals( ".b.\n...\n w \n", digger.getView());
+        assertEquals( ".b.\n...\n?w?\n", digger.getView());
         
         startPosition = new Position(2,3);
         digger.setPosition(startPosition);
-        assertEquals( " . \nb.w\n..w\n", digger.getView());
+        assertEquals( "?.?\nb.w\n..w\n", digger.getView());
         
     }
     
@@ -207,19 +215,19 @@ public class TestLineOfSight {
         
         Position startPosition = new Position(1,1);
         digger.setPosition(startPosition);
-        assertEquals( " w \nw..\nw.b\n", digger.getView());
+        assertEquals( "?w?\nw..\nw.b\n", digger.getView());
         
         startPosition = new Position(3,1);
         digger.setPosition(startPosition);
-        assertEquals( " . \nw..\nwww\n", digger.getView());
+        assertEquals( "?.?\nw..\nwww\n", digger.getView());
         
         startPosition = new Position(3,3);
         digger.setPosition(startPosition);
-        assertEquals( " . \n..w\nwww\n", digger.getView());
+        assertEquals( "?.?\n..w\nwww\n", digger.getView());
         
         startPosition = new Position(1,3);
         digger.setPosition(startPosition);
-        assertEquals( " w \n..w\nb.w\n", digger.getView());
+        assertEquals( "?w?\n..w\nb.w\n", digger.getView());
         
     }
     
@@ -230,7 +238,7 @@ public class TestLineOfSight {
         
         Position startPosition = new Position(2,2);
         digger.setPosition(startPosition);
-        assertEquals( " www \nw...w\nw.b.w\nw...w\n  w  \n", digger.getView());
+        assertEquals( "?www?\nw...w\nw.b.w\nw...w\n??w??\n", digger.getView());
         
     }
     
@@ -241,19 +249,19 @@ public class TestLineOfSight {
         
         Position startPosition = new Position(1,2); 
         digger.setPosition(startPosition);
-        assertEquals( "wwwww\nw...w\nw.b.w\n  .  \n", digger.getView());
+        assertEquals( "wwwww\nw...w\nw.b.w\n??.??\n", digger.getView());
            
         startPosition = new Position(2,1);
         digger.setPosition(startPosition);
-        assertEquals( " w  \nw...\nw.b.\nw...\nwww \n", digger.getView());
+        assertEquals( "?w??\nw...\nw.b.\nw...\nwww?\n", digger.getView());
         
         startPosition = new Position(3,2);
         digger.setPosition(startPosition);
-        assertEquals( " ... \nw.b.w\nw...w\nwwwww\n", digger.getView());
+        assertEquals( "?...?\nw.b.w\nw...w\nwwwww\n", digger.getView());
         
         startPosition = new Position(2,3);
         digger.setPosition(startPosition);
-        assertEquals( "  w \n...w\n.b.w\n...w\n www\n", digger.getView());
+        assertEquals( "??w?\n...w\n.b.w\n...w\n?www\n", digger.getView());
     }
     
     @Test
@@ -264,19 +272,59 @@ public class TestLineOfSight {
         
         Position startPosition = new Position(1,1);
         digger.setPosition(startPosition);
-        assertEquals( "wwww\nw...\nw.b.\nw.. \n", digger.getView());
+        assertEquals( "wwww\nw...\nw.b.\nw..?\n", digger.getView());
         
         startPosition = new Position(3,1);
         digger.setPosition(startPosition);
-        assertEquals( " .  \nw.b.\nw...\nwwww\n", digger.getView());
+        assertEquals( "?.??\nw.b.\nw...\nwwww\n", digger.getView());
         
         startPosition = new Position(3,3);
         digger.setPosition(startPosition);
-        assertEquals( "  . \n.b.w\n...w\nwwww\n", digger.getView());
+        assertEquals( "??.?\n.b.w\n...w\nwwww\n", digger.getView());
         
         startPosition = new Position(1,3);
         digger.setPosition(startPosition);
-        assertEquals( "wwww\n...w\n.b.w\n ..w\n", digger.getView());
+        assertEquals( "wwww\n...w\n.b.w\n?..w\n", digger.getView());
         
+        
+    }
+    
+    //Centreing tests    
+    @Test
+    public void centreingViewOnDigger() throws Exception{
+    	square_2.toggleDiggercentreingTo(true);
+    	digger = new Digger("Diggers name", "secretName");
+        digger.newGame(square_2);
+        
+        Position startPosition = new Position(1,1);
+        digger.setPosition(startPosition);
+        assertEquals( "-----\n-wwww\n-w...\n-w.b.\n-w...\n", digger.getView());
+        
+        startPosition = new Position(2,2);
+        digger.setPosition(startPosition);
+        assertEquals( "wwwww\nw...w\nw.b.w\nw...w\nwwwww\n", digger.getView());
+        
+        startPosition = new Position(3,3);
+        digger.setPosition(startPosition);
+        assertEquals( "...w-\n.b.w-\n...w-\nwwww-\n-----\n", digger.getView());
+    }
+    
+    @Test
+    public void centreingViewOnDiggerHex() throws Exception{
+    	hexagon_2.toggleDiggercentreingTo(true);
+    	digger = new Digger("Diggers name", "secretName");
+        digger.newGame(hexagon_2);
+        
+        Position startPosition = new Position(1,1);
+        digger.setPosition(startPosition);
+        assertEquals( "-----\n-wwww\n-w...\n-w.b.\n-w..?\n", digger.getView());
+        
+        startPosition = new Position(2,2);
+        digger.setPosition(startPosition);
+        assertEquals( "?www?\nw...w\nw.b.w\nw...w\n??w??\n", digger.getView());
+        
+        startPosition = new Position(3,3);
+        digger.setPosition(startPosition);
+        assertEquals( "??.?-\n.b.w-\n...w-\nwwww-\n-----\n", digger.getView());
     }
 }
