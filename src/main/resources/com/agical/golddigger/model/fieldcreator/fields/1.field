@@ -1,5 +1,9 @@
 !line-of-sight=5
 !number-of-sides=6
+!plugins
+DayNightPlugin
+!cycle-time=3
+!los-scale=50
 !field-tiles
 wwwwwwww
 w......w
