@@ -152,14 +152,18 @@ public class Digger {
     public synchronized Option<Position> move(Fn1<Position,Position> move) {
         Position newPosition = move.apply(getPosition());
         //Makes sure that east and west doesn't get updated when 6 sided
-        if(goldField.getNumberOfSides() == 6 && (Position.EAST.equals(move) || 
-           Position.WEST.equals(move))){
+        if(goldField.getNumberOfSides() == 6 && (
+        		Position.EAST.equals(move) || Position.WEST.equals(move))){
+        	return Option.<Position>none();
+        } else if (goldField.getNumberOfSides() == 4 &&
+        		(Position.NORTH_EAST.equals(move) || Position.NORTH_WEST.equals(move) || 
+        		 Position.SOUTH_EAST.equals(move) || Position.SOUTH_WEST.equals(move))){
         	return Option.<Position>none();
         }
-        
+
+        update();
         if(goldField.isTreadable(newPosition)) {
             setPosition(newPosition);
-            update();
             
 			Square t = goldField.getSquare(position);
 			double scale = ((double)t.getCost())/100;

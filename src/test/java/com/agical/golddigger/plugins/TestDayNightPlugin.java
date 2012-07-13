@@ -85,23 +85,30 @@ public class TestDayNightPlugin {
 
 		WebResponse response;
 		move(wc, "east");
-		assertTrue(((DayNightPlugin) digger.getGoldField().getPluginService().getPlugins().next()).isDay());
+		assertTrue("Wasnt initialised to day-time",((DayNightPlugin) digger.getGoldField().getPluginService().getPlugins().next()).isDay());
 		response = view(wc);
-		assertEquals("-----\n?www?\nw.b.w\n?www?\n-----",response.getText().trim());
+		assertEquals("This shouldn't have failed","-----\n?www?\nw.b.w\n?www?\n-----",response.getText().trim());
 		move(wc, "east");
 		move(wc, "west");
 		move(wc, "west");
 		move(wc, "east");
-		assertFalse(((DayNightPlugin) digger.getGoldField().getPluginService().getPlugins().next()).isDay());
+		assertFalse("Did not change to night-time",((DayNightPlugin) digger.getGoldField().getPluginService().getPlugins().next()).isDay());
+		response = view(wc);
+		assertEquals("Did not reduce the line of sight","www\n.b.\nwww",response.getText().trim());
+		move(wc, "east");
+		move(wc, "west");
+		move(wc, "west");
+		move(wc, "east");
+		assertTrue("Did not return back to day",((DayNightPlugin) digger.getGoldField().getPluginService().getPlugins().next()).isDay());
+		response = view(wc);
+		assertEquals("Did not reset the line of sight","-----\n?www?\nw.b.w\n?www?\n-----",response.getText().trim());
+		move(wc, "east");
+		move(wc, "east");//invalid move
+		move(wc, "east");//invalud move
+		move(wc, "west");
+		assertFalse("Did not count the invalid moves",((DayNightPlugin) digger.getGoldField().getPluginService().getPlugins().next()).isDay());
 		response = view(wc);
 		assertEquals("www\n.b.\nwww",response.getText().trim());
-		move(wc, "east");
-		move(wc, "west");
-		move(wc, "west");
-		move(wc, "east");
-		assertTrue(((DayNightPlugin) digger.getGoldField().getPluginService().getPlugins().next()).isDay());
-		response = view(wc);
-		assertEquals("-----\n?www?\nw.b.w\n?www?\n-----",response.getText().trim());
 		
 		server.stop();
 	}
