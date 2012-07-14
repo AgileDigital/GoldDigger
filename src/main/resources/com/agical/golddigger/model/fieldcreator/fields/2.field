@@ -1,13 +1,3 @@
-!line-of-sight=5
-!number-of-sides=4
-!plugins
-DayNightPlugin
-!cycle-time=3
-!los-scale=50
-!field-tiles
-wwwwwwww
-w......w
-w.h..w.w
-w..h...w
-w....c.w
-wwwwwwww
+wwwwwwwwwwwwwww
+wb.........999w
+wwwwwwwwwwwwwww

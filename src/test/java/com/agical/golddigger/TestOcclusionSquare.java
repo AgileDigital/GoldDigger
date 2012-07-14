@@ -18,6 +18,7 @@ import com.agical.golddigger.model.GoldField;
 import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+import com.agical.golddigger.model.tiles.WallSquare;
 
 public class TestOcclusionSquare {
 	private FieldCreator fieldCreator_2, fieldCreator_3, fieldCreator_multi_2, fieldCreator_multi_3;
@@ -42,12 +43,27 @@ public class TestOcclusionSquare {
 		square_3 = new GoldField(fieldCreator_3);
 		square_multi_2 = new GoldField(fieldCreator_multi_2);
 		square_multi_3 = new GoldField(fieldCreator_multi_3);
-		square_2.toggleDiggercentreingTo(false);
-		square_3.toggleDiggercentreingTo(false);
-		square_multi_2.toggleDiggercentreingTo(false);
-		square_multi_3.toggleDiggercentreingTo(false);
+		
+		square_2 = setValues(square_2);
+		square_3 = setValues(square_3);
+		square_multi_2 = setValues(square_multi_2);
+		square_multi_3 = setValues(square_multi_3);
 	}
 
+	private GoldField setValues(GoldField field){
+		WallSquare wallSquare = new WallSquare();
+		wallSquare.setRadius(100);
+		wallSquare.setOcclusionCost(100);
+		for(int i = 0; i < field.getSquares().length; i++){
+			for(int j = 0; j < (field.getSquares())[i].length; j++){
+				if(field.getSquares()[i][j].getClass().isInstance(wallSquare)){
+					field.getSquares()[i][j] = wallSquare;
+				}
+			}
+		}
+		field.toggleDiggercentreingTo(false);
+		return field;
+	}
 
 	private String createSetting(int los_length, int no_of_sides) {
     	return DELIMITER+LINE_OF_SIGHT+" "+SEPERATOR +" "+ los_length + "\n"+

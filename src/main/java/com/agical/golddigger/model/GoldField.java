@@ -552,11 +552,11 @@ public class GoldField {
 	
 	private double getLine(double x1, double x2, double y1,	double y2) {
 		if(number_of_sides == 6){
-			double half = 0.5;
+			double half = unitH;
 			if(x1 % 2 == 1) y1+=half;
 			if(x2 % 2 == 1) y2+=half;
 		}
-		return Math.sqrt(Math.abs(x1 - x2)*Math.abs(x1 - x2) + Math.abs(y1 - y2) * Math.abs(y1 - y2));
+		return Math.round(Math.sqrt(Math.abs(x1 - x2)*Math.abs(x1 - x2) + Math.abs(y1 - y2) * Math.abs(y1 - y2)));
 	}
 
 	private double getLineOfSightLeft(double blockX, double blockY,double diggerX, double diggerY, int occlusionPenalty) {
