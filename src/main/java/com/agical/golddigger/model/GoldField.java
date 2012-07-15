@@ -25,6 +25,12 @@ public class GoldField {
 	private boolean occludeTiles = true;
 	private boolean centreDigger = true;
 	final static private String wrapper_tile_symbol = "-";
+	private boolean human_readable_hexagon_view = false;
+	
+	private String left_wrapper = "";
+	private String right_wrapper = "";
+	private String top_wrapper = "";
+	private String bottom_wrapper = "";
     
     public void setGolddiggerNotifier(GolddiggerNotifier golddiggerNotifier) {
         this.golddiggerNotifier = golddiggerNotifier;
@@ -75,14 +81,7 @@ public class GoldField {
         
     public String constructDiggerView(Digger digger) {
     	String view = "";
-    	String new_line = "";
-    	String view_line = "";
-    	Boolean add_view_line = false;
-    	
-    	// a string of unknown tile symbols to be added to centre the digger
-    	String wrapper = "";
-    	int wrapper_length = (line_of_sight_length*2)+1; // length of the wrapper line
-    	
+    	   	    	    	
     	// an array with a the same width and height of the squares
     	// array that indicates which tiles should be visible
     	
@@ -163,78 +162,10 @@ public class GoldField {
     		
 		}
 				
-				
-				
-    	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
-    	// array to return to the client
-    	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
-			new_line = "";
-			view_line = "";
-			add_view_line = false;
-			for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
-				// ensure that we are not out of bounds of latitude
-				if ((digger_lat + deltaLat) >= 0 && (digger_lat + deltaLat) < squares.length) {
-					// ensure that we are not out of bounds of longitude
-					if ((digger_long + deltaLong) >= 0 && (digger_long + deltaLong) < squares[0].length) {
-						int lat = digger_lat + deltaLat;
-						int longt = digger_long + deltaLong;
-						
-						// only make those tiles visible who have been marked as
-						// checked or true - the outermost layer is true, while the inner layers
-						// are checked
-						if (visibleTiles[lat][longt] == "Checked" || visibleTiles[lat][longt] == "True"){
-							if(unoccludedTiles[lat][longt] != "?")
-							{
-								Square square = squares[lat][longt];
-				    			square.viewed();
-				    			view_line += square;
-							}
-							else if(unoccludedTiles[lat][longt] == "?")
-							{
-								
-								view_line += "?";
-							}
-			    			new_line = "\n";
-			    			add_view_line = true;
-			    			
-						} else {
-							view_line += "?";
-						}
-					} else {
-						if(centreDigger){
-							
-							if ((digger_long + deltaLong) < 0) { 
-							
-								view_line = wrapper_tile_symbol + view_line;
-								
-							} else if ((digger_long + deltaLong) >= squares[0].length) {
-								
-								view_line = view_line + wrapper_tile_symbol;
-								
-							}
-						}
-					}
-				}
-			}
-			wrapper = "";
-			if(centreDigger){
-				if ((digger_lat + deltaLat) < 0) {
-					
-					for (int m = 0; m < wrapper_length; m++) wrapper += wrapper_tile_symbol;
-					view = wrapper + "\n" + view;
-									
-				} else if ((digger_lat + deltaLat) >= squares.length) {
-					for (int m = 0; m < wrapper_length; m++) wrapper += wrapper_tile_symbol;
-					view = view + wrapper + "\n";
-					
-				}
-	    	}
-			// if this line of view is to be added, add it and format it with a new line character
-			if (add_view_line) {
-				view += view_line + new_line;
-			}
-		}
-    	return view;
+		if (centreDigger) adjustWrappersForCentredDigger(digger);		
+		view = parseView(visibleTiles, unoccludedTiles, digger);
+		return view;
+    	
     }
     
     public String getField(Digger digger) {
@@ -806,7 +737,211 @@ public class GoldField {
   		occludeTiles = occluding;
   	}
   	
+  	private String parseView(String visibleTiles[][], String unoccludedTiles[][], Digger digger) {
+  		String view = "";
+  		if (number_of_sides == 4) {
+  			view = constructSquareTilesView(visibleTiles, unoccludedTiles, digger);
+  		} else if (number_of_sides == 6) {
+  			if (human_readable_hexagon_view) {
+  				view = constructHexagonTilesHumanView(visibleTiles, unoccludedTiles, digger);  				
+  			} else {
+  				view = constructHexagonTilesView(visibleTiles, unoccludedTiles, digger);
+  			}
+  		}
+  		
+  		return view;
+  		
+  	}
   	
+  	private String constructHexagonTilesHumanView(String visibleTiles[][], String unoccludedTiles[][], Digger digger) {
+  		String view = "";
+  		
+  		// construct human readable view for hexagon tiles
+  		String new_line = "";
+    	String view_line_even = "";
+    	String view_line_odd = "";
+    	Boolean add_view_line = false;
+  		
+    	Position position = digger.getPosition();
+    	int digger_lat = position.getLatitude();
+    	int digger_long = position.getLongitude();
+    	
+  	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
+    	// array to return to the client
+    	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
+			new_line = "";
+			view_line_even = "";
+			view_line_odd = "";
+			
+			add_view_line = false;
+			for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
+				// ensure that we are not out of bounds of latitude
+				if ((digger_lat + deltaLat) >= 0 && (digger_lat + deltaLat) < squares.length) {
+					// ensure that we are not out of bounds of longitude
+					if ((digger_long + deltaLong) >= 0 && (digger_long + deltaLong) < squares[0].length) {
+						int lat = digger_lat + deltaLat;
+						int longt = digger_long + deltaLong;
+						
+						// only make those tiles visible who have been marked as
+						// checked or true - the outermost layer is true, while the inner layers
+						// are checked
+						if (visibleTiles[lat][longt] == "Checked" || visibleTiles[lat][longt] == "True"){
+							if(unoccludedTiles[lat][longt] != "?")
+							{
+								Square square = squares[lat][longt];
+				    			square.viewed();
+				    			if ((longt % 2) == 0) {
+									view_line_even += square;
+									view_line_odd += " ";
+								} else {
+									view_line_odd += square;
+									view_line_even += " ";
+								}
+							}
+							else if(unoccludedTiles[lat][longt] == "?")
+							{
+								
+								if ((longt % 2) == 0) {
+									view_line_even += "?";
+									view_line_odd += " ";
+								} else {
+									view_line_odd += "?";
+									view_line_even += " ";
+								}
+							}
+			    			new_line = "\n";
+			    			add_view_line = true;
+			    			
+						} else {
+							if ((longt % 2) == 0) {
+								view_line_even += "?";
+								view_line_odd += " ";
+							} else {
+								view_line_odd += "?";
+								view_line_even += " ";
+							}
+						}
+					}
+				}
+			}
+			
+			view_line_odd = left_wrapper + view_line_odd + right_wrapper;
+			view_line_even = left_wrapper + view_line_even + right_wrapper;
+			
+			// if this line of view is to be added, add it and format it with a new line character
+			if (add_view_line) {
+				view += view_line_even + "\n" + view_line_odd + new_line;
+			}
+		}
+    	
+    	view = top_wrapper + view + bottom_wrapper;
+    	
+  		return view;
+  	}
+  	
+  	private String constructHexagonTilesView(String visibleTiles[][], String unoccludedTiles[][], Digger digger) {
+  		String view = "";
+  		view = constructSquareTilesView(visibleTiles, unoccludedTiles, digger);
+  		return view;
+  	}
+  	
+  	private String constructSquareTilesView(String visibleTiles[][], String unoccludedTiles[][], Digger digger) {
+  		
+  		String new_line = "";
+    	String view_line = "";    	
+    	Boolean add_view_line = false;
+  		String view = "";  		 		
+    	
+    	Position position = digger.getPosition();
+    	int digger_lat = position.getLatitude();
+    	int digger_long = position.getLongitude();
+    	
+  	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
+    	// array to return to the client
+    	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
+			new_line = "";
+			view_line = "";
+			
+			add_view_line = false;
+			for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
+				// ensure that we are not out of bounds of latitude
+				if ((digger_lat + deltaLat) >= 0 && (digger_lat + deltaLat) < squares.length) {
+					// ensure that we are not out of bounds of longitude
+					if ((digger_long + deltaLong) >= 0 && (digger_long + deltaLong) < squares[0].length) {
+						int lat = digger_lat + deltaLat;
+						int longt = digger_long + deltaLong;
+						
+						// only make those tiles visible who have been marked as
+						// checked or true - the outermost layer is true, while the inner layers
+						// are checked
+						if (visibleTiles[lat][longt] == "Checked" || visibleTiles[lat][longt] == "True"){
+							if(unoccludedTiles[lat][longt] != "?")
+							{
+								Square square = squares[lat][longt];
+				    			square.viewed();
+				    			view_line += square;
+							}
+							else if(unoccludedTiles[lat][longt] == "?")
+							{
+								
+								view_line += "?";
+							}
+			    			new_line = "\n";
+			    			add_view_line = true;
+			    			
+						} else {
+							view_line += "?";
+						}
+					}
+				}
+			}
+			
+			view_line = left_wrapper + view_line + right_wrapper;
+						
+			// if this line of view is to be added, add it and format it with a new line character
+			if (add_view_line) {
+				view += view_line + new_line;
+			}
+		}
+    	
+    	view = top_wrapper + view + bottom_wrapper;
+    	
+    	return view;
+  	}
+  	
+  	public void setHumanReadableHexagonView(boolean human_readable) {
+  		human_readable_hexagon_view = human_readable;
+  	}
+  	
+  	private void adjustWrappersForCentredDigger(Digger digger) {
+  		
+  		int left_residue, right_residue, bottom_residue, top_residue;
+  		int wrapper_line_length = (line_of_sight_length*2)+1;
+  		String wrapper_line = "";
+  		
+  		left_wrapper = right_wrapper = top_wrapper = bottom_wrapper = "";
+  		
+  		for (int i = 0; i < wrapper_line_length; i++) wrapper_line += wrapper_tile_symbol;  		
+  		left_residue = right_residue = bottom_residue = top_residue = 0;
+  		Position digger_position = digger.getPosition();
+  		int digger_lat = digger_position.getLatitude();
+  		int digger_long = digger_position.getLongitude();
+  		
+  		left_residue = digger_position.getLongitude() - line_of_sight_length;
+  		right_residue = line_of_sight_length - (maxLongitude - digger_long) - 1;
+  		top_residue = digger_position.getLatitude() - line_of_sight_length;
+  		bottom_residue = line_of_sight_length - (maxLatitude - digger_lat) - 1;
+  		
+  		if (human_readable_hexagon_view) {
+  			top_residue = (top_residue * 2) + (digger_long % 2);
+  			bottom_residue = (bottom_residue * 2) + ((digger_long % 2) - 1);
+  		}
+  		
+  		for (int i = left_residue; i < 0; i++) left_wrapper += wrapper_tile_symbol;
+  		for (int i = right_residue; i > 0; i--) right_wrapper += wrapper_tile_symbol;  		
+  		for (int i = top_residue; i < 0; i++) top_wrapper += wrapper_line + "\n";
+  		for (int i = bottom_residue; i > 0; i--) bottom_wrapper += wrapper_line + "\n";  		
+  	}
   	
   //Testing functions
   	private void prEq(double[] equations) 
@@ -819,4 +954,6 @@ public class GoldField {
   	{
   		System.out.println("(" + x + ", " + y + ")");
   	}
+  	
+  	
 }
