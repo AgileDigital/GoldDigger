@@ -17,6 +17,7 @@ import com.agical.golddigger.model.GoldField;
 import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+import com.agical.golddigger.model.tiles.WallSquare;
 
 public class TestOcclusionHex {
 	private FieldCreator testfieldCreator;
@@ -33,9 +34,23 @@ public class TestOcclusionHex {
 		testfieldCreator = new StringFieldCreator(createSetting(4,6) + testMap);
 	
 		testField = new GoldField(testfieldCreator);
-		testField.toggleDiggercentreingTo(false);
+		testField = setValues(testField);
 	}
-
+	
+	private GoldField setValues(GoldField field){
+		WallSquare wallSquare = new WallSquare();
+		wallSquare.setRadius(100);
+		wallSquare.setOcclusionCost(100);
+		for(int i = 0; i < field.getSquares().length; i++){
+			for(int j = 0; j < (field.getSquares())[i].length; j++){
+				if(field.getSquares()[i][j].getClass().isInstance(wallSquare)){
+					field.getSquares()[i][j] = wallSquare;
+				}
+			}
+		}
+		field.toggleDiggercentreingTo(false);
+		return field;
+	}
 
 	private String createSetting(int los_length, int no_of_sides) {
     	return DELIMITER+LINE_OF_SIGHT+" "+SEPERATOR +" "+ los_length + "\n"+

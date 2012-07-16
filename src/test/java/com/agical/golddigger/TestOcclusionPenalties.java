@@ -18,14 +18,13 @@ import com.agical.golddigger.model.GoldField;
 import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
-
-import org.junit.Test;
+import com.agical.golddigger.model.tiles.CitySquare;
+import com.agical.golddigger.model.tiles.HillSquare;
+import com.agical.golddigger.model.tiles.WallSquare;
 
 public class TestOcclusionPenalties {
-	private FieldCreator fieldCreator_2, fieldCreator_3, fieldCreator_multi_2, fieldCreator_multi_3;
 	private FieldCreator squareFieldCreator_penalties, hexFieldCreator_penalties;
-	private GoldField square_2, square_3, square_multi_2, square_multi_3, square_penalties;
-	private GoldField hex_penalties;
+	private GoldField  square_penalties, hex_penalties;
 	private Digger digger;
 	
 	@Before
@@ -50,8 +49,38 @@ public class TestOcclusionPenalties {
 		square_penalties = new GoldField(squareFieldCreator_penalties);
 		hex_penalties = new GoldField(hexFieldCreator_penalties);
 		
-		square_penalties.toggleDiggercentreingTo(false);		
-		hex_penalties.toggleDiggercentreingTo(false);
+		square_penalties = setValues(square_penalties);
+		hex_penalties = setValues(hex_penalties);
+		
+	}
+	
+	private GoldField setValues(GoldField field){
+		WallSquare wallSquare = new WallSquare();
+		wallSquare.setRadius(100);
+		wallSquare.setOcclusionCost(100);
+		
+		HillSquare hillSquare = new HillSquare();
+		hillSquare.setRadius(50);
+		hillSquare.setOcclusionCost(50);
+		
+		CitySquare citySquare = new CitySquare();
+		citySquare.setOcclusionCost(80);
+		citySquare.setRadius(80);
+		for(int i = 0; i < field.getSquares().length; i++){
+			for(int j = 0; j < (field.getSquares())[i].length; j++){
+				if(field.getSquares()[i][j].getClass().isInstance(wallSquare)){
+					field.getSquares()[i][j] = wallSquare;
+				}
+				if(field.getSquares()[i][j].getClass().isInstance(hillSquare)){
+					field.getSquares()[i][j] = hillSquare;
+				}
+				if(field.getSquares()[i][j].getClass().isInstance(citySquare)){
+					field.getSquares()[i][j] = citySquare;
+				}
+			}
+		}
+		field.toggleDiggercentreingTo(false);
+		return field;
 	}
 	
 	private String createSetting(int los_length, int no_of_sides) {
@@ -89,7 +118,7 @@ public class TestOcclusionPenalties {
         assertEquals(	"??w???w?\n" +
 						"??..??.?\n" +
 						"???..w.?\n" +
-						"????...w\n" +
+						"???h...w\n" +
 						"???..c.w\n" +
 						"?????www\n", digger.getView());
         
@@ -109,7 +138,7 @@ public class TestOcclusionPenalties {
 						"w.h..w??\n" +
 						"w..h...?\n" +
 						"w....c.w\n" +
-						"wwwwww??\n", digger.getView());        
+						"wwwwwww?\n", digger.getView());        
 	}
 	
 	@Test
@@ -122,7 +151,7 @@ public class TestOcclusionPenalties {
         assertEquals(	"wwww????\n" +
 						"w......w\n" +
 						"w.c..???\n" +
-						"w..h????\n" +
+						"w..h.???\n" +
 						"?.h.????\n" +
 						"?wwww???\n", digger.getView());
         
@@ -130,7 +159,7 @@ public class TestOcclusionPenalties {
         digger.setPosition(startPosition);
         assertEquals(	"?wwwww??\n" +
 						"?......?\n" +
-						"?.c..???\n" +
+						"?.c..??w\n" +
 						"w..h?..w\n" +
 						"w.h....w\n" +
 						"www?????\n", digger.getView());
@@ -138,16 +167,16 @@ public class TestOcclusionPenalties {
         startPosition = new Position(4, 6);
         digger.setPosition(startPosition);
         assertEquals(	"?w????w?\n" +
-						"??.???.?\n" +
+						"?..???.?\n" +
 						"w.c.?w.w\n" +
-						"?..h...w\n" +
+						"w..h...w\n" +
 						"w.h....w\n" +
 						"????wwww\n", digger.getView());
         
         startPosition = new Position(2, 6);
         digger.setPosition(startPosition);
         assertEquals(	"?w?w?www\n" +
-						"w?.....w\n" +
+						"w......w\n" +
 						"??c?.w.w\n" +
 						"?????..w\n" +
 						"?????..?\n" +
@@ -156,7 +185,7 @@ public class TestOcclusionPenalties {
         startPosition = new Position(2, 3);
         digger.setPosition(startPosition);
         assertEquals(	"?wwwww?w\n" +
-						"?......?\n" +
+						"w......?\n" +
 						"w.c..w??\n" +
 						"w..h..??\n" +
 						"w.h....w\n" +
