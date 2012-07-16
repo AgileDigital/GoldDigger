@@ -25,7 +25,7 @@ public class GoldField {
 	private boolean occludeTiles = true;
 	private boolean centreDigger = true;
 	final static private String wrapper_tile_symbol = "-";
-	private boolean human_readable_hexagon_view = false;
+	private boolean human_readable_hexagon_view = true;
 	
 	private String left_wrapper = "";
 	private String right_wrapper = "";
@@ -932,7 +932,7 @@ public class GoldField {
   		top_residue = digger_position.getLatitude() - line_of_sight_length;
   		bottom_residue = line_of_sight_length - (maxLatitude - digger_lat) - 1;
   		
-  		if (human_readable_hexagon_view) {
+  		if (human_readable_hexagon_view && (number_of_sides == 6)) {
   			top_residue = (top_residue * 2) + (digger_long % 2);
   			bottom_residue = (bottom_residue * 2) + ((digger_long % 2) - 1);
   		}

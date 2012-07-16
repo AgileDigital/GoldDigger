@@ -52,6 +52,7 @@ public class TestOcclusionPenalties {
 		
 		square_penalties.toggleDiggercentreingTo(false);		
 		hex_penalties.toggleDiggercentreingTo(false);
+		hex_penalties.setHumanReadableHexagonView(false);
 	}
 	
 	private String createSetting(int los_length, int no_of_sides) {

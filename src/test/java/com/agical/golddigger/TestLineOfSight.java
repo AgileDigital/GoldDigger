@@ -30,20 +30,24 @@ public class TestLineOfSight {
         square_1.toggleDiggercentreingTo(false);
         square_1.toggleOcclusionTo(false);
         
+        
         fieldCreator = new StringFieldCreator(createSetting(2, 4) + map);
         square_2 = new GoldField(fieldCreator);
         square_2.toggleDiggercentreingTo(false);
         square_2.toggleOcclusionTo(false);
         
+        
         fieldCreator = new StringFieldCreator(createSetting(1, 6) + map);
         hexagon_1 = new GoldField(fieldCreator);
         hexagon_1.toggleDiggercentreingTo(false);
         hexagon_1.toggleOcclusionTo(false);
+        hexagon_1.setHumanReadableHexagonView(false);
         
         fieldCreator = new StringFieldCreator(createSetting(2, 6) + map);
         hexagon_2 = new GoldField(fieldCreator);
         hexagon_2.toggleDiggercentreingTo(false);
         hexagon_2.toggleOcclusionTo(false);
+        hexagon_2.setHumanReadableHexagonView(false);
     }
     
     // Test sight view for the centre

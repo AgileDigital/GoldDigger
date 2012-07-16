@@ -18,6 +18,7 @@ public class TestMovesWithinBoundsSixSide {
     @Before
     public void initateGolddigger() throws Exception {
         goldField = new GoldField(4,4,6);
+        goldField.setHumanReadableHexagonView(false);
         digger = new Digger("Diggers name", "secretName");
         digger.newGame(goldField);
         digger.move(Position.SOUTH);

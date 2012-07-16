@@ -47,6 +47,7 @@ public class TestAdminWebInterface {
         response = admin.listdiggers();
         assertEquals("name secretName\n", response.getText());
         response = webController.view();
+        
         assertEquals("www\nwb.\nw.1\n", response.getText());
     }
     

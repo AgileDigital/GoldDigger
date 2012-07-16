@@ -34,6 +34,7 @@ public class TestOcclusionHex {
 	
 		testField = new GoldField(testfieldCreator);
 		testField.toggleDiggercentreingTo(false);
+		testField.setHumanReadableHexagonView(false);
 	}
 
 
