@@ -161,9 +161,13 @@ public class GoldField {
     		unoccludedTiles = checkOcclusion(digger, unoccludedTiles);
     		
 		}
-				
-		if (centreDigger) adjustWrappersForCentredDigger(digger);		
+		
+		// adjust wrappers to add to the view if we want to centre the digger
+		if (centreDigger) adjustWrappersForCentredDigger(digger);
+		
+		// parse view based on the tiles which are visible
 		view = parseView(visibleTiles, unoccludedTiles, digger);
+		
 		return view;
     	
     }
@@ -766,7 +770,7 @@ public class GoldField {
     	int digger_lat = position.getLatitude();
     	int digger_long = position.getLongitude();
     	
-  	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
+    	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
     	// array to return to the client
     	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
 			new_line = "";
@@ -829,9 +833,7 @@ public class GoldField {
 			view_line_even = left_wrapper + view_line_even + right_wrapper;
 			
 			// if this line of view is to be added, add it and format it with a new line character
-			if (add_view_line) {
-				view += view_line_even + "\n" + view_line_odd + new_line;
-			}
+			if (add_view_line) view += view_line_even + "\n" + view_line_odd + new_line;
 		}
     	
     	view = top_wrapper + view + bottom_wrapper;
@@ -856,7 +858,7 @@ public class GoldField {
     	int digger_lat = position.getLatitude();
     	int digger_long = position.getLongitude();
     	
-  	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
+    	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
     	// array to return to the client
     	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
 			new_line = "";
@@ -899,9 +901,7 @@ public class GoldField {
 			view_line = left_wrapper + view_line + right_wrapper;
 						
 			// if this line of view is to be added, add it and format it with a new line character
-			if (add_view_line) {
-				view += view_line + new_line;
-			}
+			if (add_view_line) view += view_line + new_line;
 		}
     	
     	view = top_wrapper + view + bottom_wrapper;
@@ -927,9 +927,9 @@ public class GoldField {
   		int digger_lat = digger_position.getLatitude();
   		int digger_long = digger_position.getLongitude();
   		
-  		left_residue = digger_position.getLongitude() - line_of_sight_length;
+  		left_residue = digger_long - line_of_sight_length;
   		right_residue = line_of_sight_length - (maxLongitude - digger_long) - 1;
-  		top_residue = digger_position.getLatitude() - line_of_sight_length;
+  		top_residue = digger_lat - line_of_sight_length;
   		bottom_residue = line_of_sight_length - (maxLatitude - digger_lat) - 1;
   		
   		if (human_readable_hexagon_view && (number_of_sides == 6)) {
