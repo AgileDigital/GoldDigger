@@ -7,6 +7,8 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.agical.golddigger.model.Digger;
 import com.agical.golddigger.model.Diggers;
@@ -17,11 +19,28 @@ public class PathExecutor {
     private final Diggers diggers;
     private final Writer log;
     
-    public PathExecutor(Diggers diggers, Writer log) {
+    private static Timer timer = new Timer();
+    
+    public PathExecutor(Diggers diggers, Writer log, int seconds) {
         super();
         this.diggers = diggers;
         this.log = log;
+        timer.schedule(new beginGame(), seconds * 1000);
     }
+    
+    class beginGame extends TimerTask {
+    	private int times = 0;
+    	
+    	public void run(){
+    		times++;
+    		if (times <= 5000){
+    			executePath(null, null);
+    		} else {
+    			this.cancel();
+    		}
+    	}
+    }
+    
     
     public void executePath(String pathInfo, PrintWriter writer) {
         String[] splitPath = pathInfo.split("/");
