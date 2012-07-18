@@ -82,8 +82,8 @@ public class GoldField {
     	
     	if(JSON)
     	{
-    		view += "\"view\":{\n" + "\"number-of-sides\":\"" + number_of_sides + "\"";
-    		view += ",\n" + "\"line-of-sight-length\":\"" + line_of_sight_length + "\"";
+    		view += "\"view\":{\n" + "\"number-of-sides\":" + number_of_sides + "";
+    		view += ",\n" + "\"line-of-sight-length\":" + line_of_sight_length + "";
     		view += ",\n" + "\"tiles\":\n[\n";
     	}
     	
