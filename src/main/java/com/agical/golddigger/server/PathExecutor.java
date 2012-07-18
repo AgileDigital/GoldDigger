@@ -7,42 +7,43 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.agical.golddigger.model.Digger;
 import com.agical.golddigger.model.Diggers;
 import com.agical.golddigger.model.Position;
 import com.agical.jambda.Functions;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class PathExecutor {
     private final Diggers diggers;
     private final Writer log;
-    
-    private static Timer timer = new Timer();
-    
-    public PathExecutor(Diggers diggers, Writer log, int seconds) {
+    Timer timer;
+    int join_time = 30;
+    public PathExecutor(Diggers diggers, Writer log) {
         super();
         this.diggers = diggers;
         this.log = log;
-        timer.schedule(new beginGame(), seconds * 1000);
+        timer = new Timer();
+        MyTask t = new MyTask();
+        timer.schedule(t, 0, 1000);
     }
     
-    class beginGame extends TimerTask {
-    	private int times = 0;
-    	
-    	public void run(){
-    		times++;
-    		if (times <= 5000){
-    			executePath(null, null);
-    		} else {
-    			this.cancel();
-    		}
-    	}
+    class MyTask extends TimerTask {
+    	public void run() {
+            join_time--;
+            System.out.println(join_time);
+            if (join_time <= 0) {
+
+                this.cancel();
+            }
+        }
     }
     
     
     public void executePath(String pathInfo, PrintWriter writer) {
+    	    	
         String[] splitPath = pathInfo.split("/");
         String actor = splitPath[0];
         if (actor.equals("digger")) {
@@ -64,7 +65,8 @@ public class PathExecutor {
                 Digger digger = diggers.createDigger(newName, newSecretName);
                 diggers.newGame(digger);
             }
-        }
+        }	
+    	
     }
     
     private void handleDigger(PrintWriter writer, String[] splitPath) {
@@ -73,29 +75,29 @@ public class PathExecutor {
         Digger digger = diggers.getDigger(secretName);
         int numberOfSides = digger.getGoldField().getNumberOfSides();
         try {
-            if (action.equals("view")) {
+            if (action.equals("view") && (join_time <= 0)) {
                 writer.write(digger.getView());
             }
-            if (action.equals("score")) {
+            if (action.equals("score") && (join_time <= 0)) {
                 int goldInTheBank = digger.getGoldInTheBank();
                 writer.write(goldInTheBank + "\n");
             }
-            if (action.equals("grab")) {
+            if (action.equals("grab") && (join_time <= 0)) {
                 int carriedBefore = digger.getCarriedGold();
                 digger.grab();
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedAfter - carriedBefore) + "\n");
             }
-            if (action.equals("drop")) {
+            if (action.equals("drop") && (join_time <= 0)) {
                 int carriedBefore = digger.getCarriedGold();
                 digger.drop();
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedBefore - carriedAfter) + "\n");
             }
-            if (action.equals("carrying")) {
+            if (action.equals("carrying") && (join_time <= 0)) {
                 writer.write(digger.getCarriedGold() + "\n");
             }
-            if (action.equals("next")) {
+            if (action.equals("next") && (join_time <= 0)) {
                 if(digger.getGoldField().hasGold()) {
                     writer.write("FAILED\n");
                 } else {
@@ -103,7 +105,7 @@ public class PathExecutor {
                     diggers.newGame(digger);
                 }
             }
-            if (action.equals("move")) {
+            if (action.equals("move") && (join_time <= 0)) {
                 String direction = splitPath[3].toLowerCase();
                 String ok = "OK\n";
                 String failed = "FAILED\n";
