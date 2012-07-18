@@ -1,9 +1,10 @@
 package com.agical.golddigger.model.tiles;
 
+import com.agical.golddigger.model.Convertable;
 import com.agical.golddigger.model.Digger;
 import com.agical.jambda.Option;
 
-public abstract class Square {
+public abstract class Square implements Convertable{
 
 	/*
 	 * This is the move cost, higher numbers mean longer delays when a digger
@@ -92,6 +93,10 @@ public abstract class Square {
 	public boolean isEmpty() {
 		return true;
 	}
+	
+	public String toJSON(){
+		return "\"tile\":{\"type\":\"" + getType() + "\"" + getJSONAttributes() + "}";
+		}
 
 	public void setCost(int newCost) {
 		if (newCost >= 0) {
@@ -122,4 +127,8 @@ public abstract class Square {
 	public int getOcclusionCost(){
 		return occlusionCost;
 	}
+	
+	public abstract String getType();
+
+	public abstract String getJSONAttributes();
 }

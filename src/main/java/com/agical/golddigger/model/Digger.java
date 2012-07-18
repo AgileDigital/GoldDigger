@@ -17,7 +17,7 @@ import com.agical.jambda.Functions.Fn1;
 import com.agical.jambda.Functions.Fn2;
 
 
-public class Digger {
+public class Digger implements Convertable{
 	
 	public final static long BASE_MOVEMENT_TIME = 200; // measured in milliseconds
 	
@@ -198,6 +198,11 @@ public class Digger {
     public void drop() {
         Position.square.apply(getPosition(), goldField).dropBy(this);
     }
+
+	@Override
+	public String toJSON() {
+		return "\"digger\":{\"id\":\"" + name + "\",\"latitude:\"" + position.getLatitude() + "\",\"longitude:\"" + position.getLongitude() + "\",\"carrying\":\"" + carrying + "\"}";
+	}
     
 
 }

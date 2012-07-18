@@ -15,4 +15,14 @@ public class ShallowWaterSquare extends Square {
 	public String getStringRepresentation() {
 		return "s";
 	}
+
+	@Override
+	public String getType() {
+		return "shallowwater";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
 }

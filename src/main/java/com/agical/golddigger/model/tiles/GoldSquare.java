@@ -32,4 +32,29 @@ public class GoldSquare extends Square {
     public boolean isEmpty() {
         return nrOfGoldPieces==0;
     }
+
+	@Override
+	public String getType() {
+		if(nrOfGoldPieces > 0)
+		{
+			return "gold";
+		}
+		else
+		{
+			return "plain";
+		}
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		if(nrOfGoldPieces > 0)
+		{
+			return ",\"goldleft\":\"" +  nrOfGoldPieces + "\"";
+		}
+		else
+		{
+			return "";
+		}
+	}
+
 }

@@ -15,4 +15,14 @@ public class WallSquare extends Square {
     public String getStringRepresentation() {
         return "w";
     }
+
+	@Override
+	public String getType() {
+		return "wall";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
 }

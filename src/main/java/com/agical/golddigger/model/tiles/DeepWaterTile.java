@@ -16,4 +16,15 @@ public class DeepWaterTile extends Square {
 		return "d";
 	}
 
+	@Override
+	public String getType() {
+		return "deepwater";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
+
+
 }

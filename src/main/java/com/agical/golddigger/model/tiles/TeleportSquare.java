@@ -16,4 +16,14 @@ public class TeleportSquare extends Square {
 		return "t";
 	}
 
+	@Override
+	public String getType() {
+		return "teleporter";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
+
 }

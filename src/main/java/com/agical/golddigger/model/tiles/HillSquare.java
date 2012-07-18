@@ -16,4 +16,14 @@ public class HillSquare extends Square {
 		return "h";
 	}
 
+	@Override
+	public String getType() {
+		return "hill";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
+
 }

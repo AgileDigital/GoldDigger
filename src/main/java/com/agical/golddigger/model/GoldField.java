@@ -78,6 +78,14 @@ public class GoldField {
     	String new_line = "";
     	String view_line = "";
     	Boolean add_view_line = false;
+    	Boolean JSON = true;
+    	
+    	if(JSON)
+    	{
+    		view += "\"view\":{\n" + "\"number-of-sides\":\"" + number_of_sides + "\"";
+    		view += ",\n" + "\"line-of-sight-length\":\"" + line_of_sight_length + "\"";
+    		view += ",\n" + "\"tiles\":\n[\n";
+    	}
     	
     	// a string of unknown tile symbols to be added to centre the digger
     	String wrapper = "";
@@ -169,7 +177,7 @@ public class GoldField {
     	// array to return to the client
     	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
 			new_line = "";
-			view_line = "";
+			view_line = "[";
 			add_view_line = false;
 			for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
 				// ensure that we are not out of bounds of latitude
@@ -187,18 +195,54 @@ public class GoldField {
 							{
 								Square square = squares[lat][longt];
 				    			square.viewed();
-				    			view_line += square;
+				    			if(JSON)
+				    			{
+				    				if(!view_line.endsWith("["))
+									{
+										view_line += ",";
+									}
+				    				view_line += square.toJSON();
+				    			}
+				    			else
+				    			{
+				    				view_line += square;
+				    			}
 							}
 							else if(unoccludedTiles[lat][longt] == "?")
 							{
-								
-								view_line += "?";
+								if(JSON)
+				    			{
+									if(!view_line.endsWith("["))
+									{
+										view_line += ",";
+									}
+				    				view_line += "\"tile\":{\"type\":\"unknown\"}";
+				    			}
+				    			else
+				    			{
+				    				view_line += "?";
+				    			}
 							}
-			    			new_line = "\n";
+
+							if(JSON)
+			    			{
+			    				new_line = "]\n";
+			    			}
+			    			else
+			    			{
+			    				new_line = "\n";
+			    			}
 			    			add_view_line = true;
 			    			
 						} else {
-							view_line += "?";
+							if(JSON)
+			    			{
+			    				view_line += "\"tile\":{\"type\":\"unknown\"}";
+			    			}
+			    			else
+			    			{
+			    				view_line += "?";
+			    			}
 						}
 					} else {
 						if(centreDigger){
@@ -234,6 +278,11 @@ public class GoldField {
 				view += view_line + new_line;
 			}
 		}
+    	if(JSON)
+    	{
+    		view += "]\n";
+    		view += digger.toJSON() + "\n}";
+    	}
     	return view;
     }
     

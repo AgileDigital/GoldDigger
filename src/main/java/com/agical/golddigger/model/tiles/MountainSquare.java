@@ -15,4 +15,14 @@ public class MountainSquare extends Square {
 	public String getStringRepresentation() {
 		return "m";
 	}
+
+	@Override
+	public String getType() {
+		return "mountain";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
 }

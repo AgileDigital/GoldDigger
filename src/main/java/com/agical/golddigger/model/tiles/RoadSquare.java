@@ -16,4 +16,14 @@ public class RoadSquare extends Square {
 		return "r";
 	}
 
+	@Override
+	public String getType() {
+		return "road";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
+
 }

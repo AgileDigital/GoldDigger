@@ -11,4 +11,14 @@ public class BankSquare extends Square {
     public String getStringRepresentation() {
         return "b";
     }
+
+	@Override
+	public String getType() {
+		return "bank";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
 }

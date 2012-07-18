@@ -16,4 +16,14 @@ public class CitySquare extends Square {
 		return "c";
 	}
 
+	@Override
+	public String getType() {
+		return "city";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
+
 }

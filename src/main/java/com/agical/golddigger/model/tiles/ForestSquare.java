@@ -16,4 +16,15 @@ public class ForestSquare extends Square {
 		return "f";
 	}
 
+	@Override
+	public String getType() {
+		return "forest";
+	}
+
+	@Override
+	public String getJSONAttributes() {
+		return "";
+	}
+
+
 }
