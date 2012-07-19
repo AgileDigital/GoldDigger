@@ -131,7 +131,7 @@ public class StringFieldCreator extends FieldCreator {
      * If not found, will set and return and return the join time
      * to the default as defined in this class
      */
-    public int getJointTime(){
+    public int getJoinTime(){
     	String value = getAttribute(JOIN_TIME);
     	if (value == null) return DEFAULT_JOIN_TIME;
     	try {
@@ -141,7 +141,7 @@ public class StringFieldCreator extends FieldCreator {
     		return DEFAULT_JOIN_TIME;
     	}
     }
-    
+
     /**
      * Returns the game time from the field file
      * If not found, will set and return and return the game time
@@ -322,4 +322,5 @@ public class StringFieldCreator extends FieldCreator {
 	public static String attribute(String name, int i){
 		return DELIMITER+name+SEPERATOR+i+"\n";
 	}
+
 }
