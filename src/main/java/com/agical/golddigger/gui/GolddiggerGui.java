@@ -27,6 +27,7 @@ public class GolddiggerGui {
     private GolddiggerNotifier golddiggerNotifier;
     private JFrame frame;
     private final Diggers diggers;
+    private boolean update_on_command = false;
     
     public GolddiggerGui(final Diggers diggers, final int port) {
         this.diggers = diggers;
@@ -80,7 +81,10 @@ public class GolddiggerGui {
             public void update(Digger digger2) {
                 diggersScore.get(digger2).setText(
                         digger2.getName() + ": " + digger2.getGoldInTheBank() + " [" + digger2.getCarriedGold() + "]");
-                diggersPanels.get(digger2).repaint();
+                // this statement updates the GUI
+                // A timer has been added to update the GUI every second rather than on
+                // every command issued by teams. Hence, update on command is set to false.
+                if (update_on_command) diggersPanels.get(digger2).repaint();
                 frame.validate();
             }
         };

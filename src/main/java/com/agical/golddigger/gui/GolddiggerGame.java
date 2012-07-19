@@ -21,7 +21,7 @@ import java.util.TimerTask;
 public class GolddiggerGame {
 	private static Timer repaintTimer = new Timer();
 	private static final int repaintTimer_intial_delay = 1000;
-	private static final int repaintTimer_delay = 1000;
+	private static final int repaintTimer_interval = 1000;
 	
     public static void main(String[] args) throws IOException {
     	
@@ -70,7 +70,7 @@ public class GolddiggerGame {
 
         //Sets up a timer
         
-        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_delay);
+        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_interval);
         return Tuples.duo(golddiggerGui, golddiggerServer);
     }
 
@@ -103,7 +103,7 @@ public class GolddiggerGame {
 
         Tuple2<Diggers, GolddiggerServer> playbackDiggers = playbackGame.startGameFromLogWithDelay(playbackPort, delay, pipedReader, playbackApplicationLogFile);
         GolddiggerGui golddiggerGui = new GolddiggerGui(playbackDiggers.getFirst(), playbackPort);
-        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_delay);
+        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_interval);
 
         return Tuples.duo(golddiggerGui, playbackDiggers.getSecond());
     }
