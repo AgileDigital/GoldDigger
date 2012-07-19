@@ -19,8 +19,11 @@ import java.util.TimerTask;
 public class PathExecutor {
     private final Diggers diggers;
     private final Writer log;
-    Timer timer;
+    Timer timer, endingTimer;
+    EndingTask endingTask;
     int join_time = 30;
+    int end_time = 10; // Seconds, as above
+    boolean ending = false;
     public PathExecutor(Diggers diggers, Writer log) {
         super();
         this.diggers = diggers;
@@ -28,6 +31,9 @@ public class PathExecutor {
         timer = new Timer();
         MyTask t = new MyTask();
         timer.schedule(t, 0, 1000);
+        
+        endingTimer = new Timer();
+        endingTask = new EndingTask();
     }
     
     class MyTask extends TimerTask {
@@ -39,6 +45,14 @@ public class PathExecutor {
                 this.cancel();
             }
         }
+    }
+    
+    class EndingTask extends TimerTask {
+    	public void run() {
+    		//Insert some action performed after the time has expired
+    		join_time = end_time;
+    		System.out.println("\"End of game\"");
+    	}
     }
     
     
@@ -87,12 +101,26 @@ public class PathExecutor {
                 digger.grab();
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedAfter - carriedBefore) + "\n");
+                
+				if (!digger.getGoldField().hasGold()) { //Players should bank
+					System.out.println("Last piece of gold collected, x seconds remaining to bank");
+					ending = true;
+					endingTimer.schedule(endingTask, end_time * 1000);
+                }
+                
             }
             if (action.equals("drop") && (join_time <= 0)) {
                 int carriedBefore = digger.getCarriedGold();
                 digger.drop();
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedBefore - carriedAfter) + "\n");
+                
+                if (ending) {
+                	/* If a digger banks before the ending timer runs out just immediately stop the game */
+                	endingTimer.cancel();
+                	join_time = 1;
+                }
+                
             }
             if (action.equals("carrying") && (join_time <= 0)) {
                 writer.write(digger.getCarriedGold() + "\n");
