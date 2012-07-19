@@ -19,11 +19,14 @@ import java.util.TimerTask;
 public class PathExecutor {
     private final Diggers diggers;
     private final Writer log;
-    Timer timer, endingTimer;
+    Timer timer, gameTimer, endingTimer;
+    GameTask gameTask;
     EndingTask endingTask;
     int join_time = 30;
+    int game_time = 180;
     int end_time = 10; // Seconds, as above
     boolean ending = false;
+    
     public PathExecutor(Diggers diggers, Writer log) {
         super();
         this.diggers = diggers;
@@ -36,6 +39,7 @@ public class PathExecutor {
         endingTask = new EndingTask();
     }
     
+    
     class MyTask extends TimerTask {
     	public void run() {
             join_time--;
@@ -43,18 +47,30 @@ public class PathExecutor {
             if (join_time <= 0) {
 
                 this.cancel();
+                gameTimer.schedule(gameTask, 0);
             }
         }
     }
     
-    class EndingTask extends TimerTask {
+    class GameTask extends TimerTask {
+    	public void run(){	
+    		game_time--;
+    		if (game_time <= 0){
+    			this.cancel();
+    			System.out.println("\"End of game\"");
+    		} else if (ending == true){
+    			this.cancel();
+    		}
+    	}
+    }
+    
+     class EndingTask extends TimerTask {
     	public void run() {
     		//Insert some action performed after the time has expired
     		join_time = 1; //Anything non zero
     		System.out.println("\"End of game\"");
     	}
     }
-    
     
     public void executePath(String pathInfo, PrintWriter writer) {
     	    	
@@ -78,6 +94,7 @@ public class PathExecutor {
                 String newSecretName = splitPath[4];
                 Digger digger = diggers.createDigger(newName, newSecretName);
                 diggers.newGame(digger);
+
             }
         }	
     	
@@ -102,25 +119,23 @@ public class PathExecutor {
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedAfter - carriedBefore) + "\n");
                 
-				if (!digger.getGoldField().hasGold()) { //Players should bank
+                if (!digger.getGoldField().hasGold() && end_time <= game_time) { //Players should bank
 					System.out.println("Last piece of gold collected, x seconds remaining to bank");
 					ending = true;
 					endingTimer.schedule(endingTask, end_time * 1000);
                 }
-                
             }
             if (action.equals("drop") && (join_time <= 0)) {
                 int carriedBefore = digger.getCarriedGold();
                 digger.drop();
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedBefore - carriedAfter) + "\n");
-                
-                if (ending) {
+				
+				if (ending) {
                 	/* If a digger banks before the ending timer runs out just immediately stop the game */
                 	endingTimer.cancel();
                 	join_time = 1;
-                }
-                
+                }            
             }
             if (action.equals("carrying") && (join_time <= 0)) {
                 writer.write(digger.getCarriedGold() + "\n");
