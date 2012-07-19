@@ -15,15 +15,21 @@ import com.agical.jambda.Tuples.Tuple2;
 import java.io.*;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class GolddiggerGame {
-
+	private static Timer repaintTimer = new Timer();
+	private static final int repaintTimer_intial_delay = 1000;
+	private static final int repaintTimer_delay = 1000;
+	
     public static void main(String[] args) throws IOException {
+    	
         //GolddiggerGame.startGameWithoutPlayback(8066, "target/documentationCalls.log");
         AdminWebController adminWebController = new AdminWebController(8066);
         //adminWebController.add("DaDiggas", "veryVerySecret");
         startGameWithPlayback(2 * 60 * 1000L, 8066, 62986, "target/calls.log", "target/playBack.log");
-
+        
         addPlayers(adminWebController);
     }
 
@@ -61,6 +67,10 @@ public class GolddiggerGame {
         GolddiggerServer golddiggerServer = new GolddiggerServer(port, "golddigger");
         golddiggerServer.start(diggers, mainLogFile);
         GolddiggerGui golddiggerGui = new GolddiggerGui(diggers, port);
+
+        //Sets up a timer
+        
+        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_delay);
         return Tuples.duo(golddiggerGui, golddiggerServer);
     }
 
@@ -93,6 +103,7 @@ public class GolddiggerGame {
 
         Tuple2<Diggers, GolddiggerServer> playbackDiggers = playbackGame.startGameFromLogWithDelay(playbackPort, delay, pipedReader, playbackApplicationLogFile);
         GolddiggerGui golddiggerGui = new GolddiggerGui(playbackDiggers.getFirst(), playbackPort);
+        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_delay);
 
         return Tuples.duo(golddiggerGui, playbackDiggers.getSecond());
     }
@@ -110,4 +121,18 @@ public class GolddiggerGame {
         thread.start();
         return Tuples.duo(diggers, golddiggerServer);
     }
+}
+
+class RepaintTask extends TimerTask {
+	GolddiggerGui gui;
+	RepaintTask(GolddiggerGui g){
+		gui = g;
+	}
+	@Override
+	public void run() {
+		//gui.getFrame().update(gui.getFrame().getGraphics());
+		gui.getFrame().repaint();
+	}
+	
+	
 }
