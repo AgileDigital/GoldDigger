@@ -11,6 +11,7 @@ import java.io.Writer;
 import com.agical.golddigger.model.Digger;
 import com.agical.golddigger.model.Diggers;
 import com.agical.golddigger.model.Position;
+import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.jambda.Functions;
 
 import java.util.Timer;
@@ -22,15 +23,18 @@ public class PathExecutor {
     Timer timer, gameTimer, endingTimer;
     GameTask gameTask;
     EndingTask endingTask;
-    int join_time = 30;
-    int game_time = 180;
-    int end_time = 10; // Seconds, as above
+    int join_time, game_time, end_time; // seconds
     boolean ending = false;
     
-    public PathExecutor(Diggers diggers, Writer log) {
+    public PathExecutor(Diggers diggers, FieldCreator fieldCreator, Writer log) {
         super();
         this.diggers = diggers;
         this.log = log;
+        
+        join_time = fieldCreator.getJoinTime();
+        game_time = fieldCreator.getGameTime();
+        end_time = fieldCreator.getGameTime();
+        
         timer = new Timer();
         MyTask t = new MyTask();
         timer.schedule(t, 0, 1000);

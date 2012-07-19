@@ -12,6 +12,9 @@ public class EmptyFieldCreator extends FieldCreator {
     private int maxLongitude;
     private int line_of_sight_length = 1;
     private int number_of_sides = 4;
+    private int join_time = 10; //seconds
+    private int game_time = 120;//seconds
+    private int end_time = 10;  //seconds
     
     public EmptyFieldCreator(int maxLatitude, int maxLongitude) {
         this.maxLatitude = maxLatitude;
@@ -47,4 +50,20 @@ public class EmptyFieldCreator extends FieldCreator {
     public int getNumberOfSides() {
         return number_of_sides;
     }
+    
+    @Override
+    public int getJoinTime() {
+        return join_time;
+    }
+    
+    @Override
+    public int getGameTime() {
+        return game_time;
+    }
+    
+    @Override
+    public int getEndTime() {
+        return end_time;
+    }
+    
 }

@@ -19,6 +19,9 @@ public class RandomFieldCreator extends FieldCreator {
     private int startLongitude = 1;
     private int line_of_sight_length = 1;
     private int number_of_sides = 4;
+    private int join_time = 10; // seconds
+    private int game_time = 120;// seconds
+    private int end_time = 10;  // seconds
     private final int nrOfGoldItems;
     private final int nrOfWalls;
     private static final Fn4<Integer, Integer, Integer, Integer, List<Square>> create_available = new Fn4<Integer, Integer, Integer, Integer, List<Square>>() {
@@ -118,6 +121,21 @@ public class RandomFieldCreator extends FieldCreator {
     @Override
     public int getNumberOfSides() {
         return number_of_sides;
+    }
+    
+    @Override
+    public int getJoinTime() {
+        return join_time;
+    }
+    
+    @Override
+    public int getGameTime() {
+        return game_time;
+    }
+    
+    @Override
+    public int getEndTime() {
+        return end_time;
     }
     
     private List<Square> getAvailable() {

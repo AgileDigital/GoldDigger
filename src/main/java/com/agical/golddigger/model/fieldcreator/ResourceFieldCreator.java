@@ -56,6 +56,21 @@ public class ResourceFieldCreator extends FieldCreator {
     public int getNumberOfSides() {
         return fieldCreator.getNumberOfSides();
     }
+    
+    @Override
+    public int getJoinTime() {
+        return fieldCreator.getJoinTime();
+    }
+    
+    @Override
+    public int getGameTime() {
+        return fieldCreator.getGameTime();
+    }
+    
+    @Override
+    public int getEndTime() {
+        return fieldCreator.getEndTime();
+    }
 
 	public static Fn0<FieldCreator> factory(
 			final Class<?> location) {

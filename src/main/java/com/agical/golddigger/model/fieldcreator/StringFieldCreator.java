@@ -23,10 +23,18 @@ public class StringFieldCreator extends FieldCreator {
 							   COSTS = "cost-per-type",
 							   LINE_OF_SIGHT = "line-of-sight",
 							   NO_OF_SIDES   = "number-of-sides",
+							   JOIN_TIME = "join-time",
+							   GAME_TIME = "game-time",
+							   END_TIME = "end-time",
 							   PLUGINS = "plugins";
 	
     private static final int DEFAULT_NUMBER_OF_SIDES = 4,
-    						 DEFAULT_LINE_OF_SIGHT   = 1;
+    						 DEFAULT_LINE_OF_SIGHT   = 1,
+    						 DEFAULT_JOIN_TIME = 10, // seconds
+    						 DEFAULT_GAME_TIME = 120,// seconds
+    						 DEFAULT_END_TIME = 10;  // seconds
+    						 
+    
     
 	public StringFieldCreator(String result) {
 		this.result = result;
@@ -115,6 +123,54 @@ public class StringFieldCreator extends FieldCreator {
     	} catch (NumberFormatException e){
     		e.printStackTrace();
     		return DEFAULT_NUMBER_OF_SIDES;
+    	}
+    }
+    
+    /**
+     * Returns the join time from the field file
+     * If not found, will set and return and return the join time
+     * to the default as defined in this class
+     */
+    public int getJointTime(){
+    	String value = getAttribute(JOIN_TIME);
+    	if (value == null) return DEFAULT_JOIN_TIME;
+    	try {
+    		return Integer.parseInt(value);
+    	} catch (NumberFormatException e){
+    		e.printStackTrace();
+    		return DEFAULT_JOIN_TIME;
+    	}
+    }
+    
+    /**
+     * Returns the game time from the field file
+     * If not found, will set and return and return the game time
+     * to the default as defined in this class
+     */
+    public int getGameTime(){
+    	String value = getAttribute(GAME_TIME);
+    	if (value == null) return DEFAULT_GAME_TIME;
+    	try {
+    		return Integer.parseInt(value);
+    	} catch (NumberFormatException e){
+    		e.printStackTrace();
+    		return DEFAULT_GAME_TIME;
+    	}
+    }
+    
+    /**
+     * Returns the end time from the field file
+     * If not found, will set and return and return the end time
+     * to the default as defined in this class
+     */
+    public int getEndTime(){
+    	String value = getAttribute(END_TIME);
+    	if (value == null) return DEFAULT_END_TIME;
+    	try {
+    		return Integer.parseInt(value);
+    	} catch (NumberFormatException e){
+    		e.printStackTrace();
+    		return DEFAULT_END_TIME;
     	}
     }
 

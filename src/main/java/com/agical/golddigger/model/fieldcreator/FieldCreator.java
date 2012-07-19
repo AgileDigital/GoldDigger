@@ -18,6 +18,9 @@ public abstract class FieldCreator {
     public abstract int getMaxLongitude();
     public abstract int getLineOfSightLength();
     public abstract int getNumberOfSides();
+    public abstract int getJoinTime();
+    public abstract int getGameTime();
+    public abstract int getEndTime();
     
     public static final Square b() {
         return new BankSquare();
@@ -66,4 +69,5 @@ public abstract class FieldCreator {
 	public PluginService getPluginService() {
 		return null;
 	}
+
 }
