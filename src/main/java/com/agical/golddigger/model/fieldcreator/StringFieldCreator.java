@@ -30,7 +30,7 @@ public class StringFieldCreator extends FieldCreator {
 	
     private static final int DEFAULT_NUMBER_OF_SIDES = 4,
     						 DEFAULT_LINE_OF_SIGHT   = 1,
-    						 DEFAULT_JOIN_TIME = 10, // seconds
+    						 DEFAULT_JOIN_TIME = 30, // seconds
     						 DEFAULT_GAME_TIME = 120,// seconds
     						 DEFAULT_END_TIME = 10;  // seconds
     						 
