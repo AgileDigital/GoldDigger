@@ -67,7 +67,7 @@ public class PathExecutor {
      class EndingTask extends TimerTask {
     	public void run() {
     		//Insert some action performed after the time has expired
-    		join_time = end_time;
+    		join_time = 1; //Anything non zero
     		System.out.println("\"End of game\"");
     	}
     }
