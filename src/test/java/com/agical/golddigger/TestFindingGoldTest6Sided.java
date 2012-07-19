@@ -40,6 +40,7 @@ public class TestFindingGoldTest6Sided {
 		public int getLineOfSightLength() {
 			return 1;
 		}
+
     }
 
     @Before
