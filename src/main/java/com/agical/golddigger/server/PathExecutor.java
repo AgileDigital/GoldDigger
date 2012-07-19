@@ -20,20 +20,20 @@ import java.util.TimerTask;
 public class PathExecutor {
     private final Diggers diggers;
     private final Writer log;
+    FieldCreator fieldCreator;
     Timer timer, gameTimer, endingTimer;
     GameTask gameTask;
     EndingTask endingTask;
-    int join_time, game_time, end_time; // seconds
+    int join_time = fieldCreator.getJoinTime(); // seconds     
+    int game_time = fieldCreator.getGameTime();
+    int end_time = fieldCreator.getGameTime();
+    
     boolean ending = false;
     
-    public PathExecutor(Diggers diggers, FieldCreator fieldCreator, Writer log) {
+    public PathExecutor(Diggers diggers, Writer log) {
         super();
         this.diggers = diggers;
         this.log = log;
-        
-        join_time = fieldCreator.getJoinTime();
-        game_time = fieldCreator.getGameTime();
-        end_time = fieldCreator.getGameTime();
         
         timer = new Timer();
         MyTask t = new MyTask();
