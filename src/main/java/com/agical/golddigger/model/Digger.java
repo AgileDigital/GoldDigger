@@ -21,7 +21,7 @@ public class Digger {
 	
 	public final static long BASE_MOVEMENT_TIME = 200; // measured in milliseconds
 	//A switch in-case someone wants to change the server back to updating the view on a digger command i.e. moving etc.
-	private boolean updateSwitch = false;
+	
     private Position position = new Position(1, 1);
     private int carrying;
     private int cashed;
@@ -86,19 +86,19 @@ public class Digger {
     }
     
     private void update() {
-    	if(updateSwitch){
-	        golddiggerNotifier.map(updateListeners.apply(this), Functions.<Unit>constantly(Unit.unit));
-	
-	        if (goldField.getPluginService() != null){
-	        	Iterator<GoldDiggerPlugin> plugins = goldField.getPluginService().getPlugins();
-	        	while (plugins.hasNext()){
-	        		GoldDiggerPlugin plugin = plugins.next();
-	        		if (plugin instanceof FieldUpdatePlugin){
-	        			((FieldUpdatePlugin) plugin).update(goldField);
-	        		}
-	        	}
-	        }
-    	}
+    	
+        golddiggerNotifier.map(updateListeners.apply(this), Functions.<Unit>constantly(Unit.unit));
+
+        if (goldField.getPluginService() != null){
+        	Iterator<GoldDiggerPlugin> plugins = goldField.getPluginService().getPlugins();
+        	while (plugins.hasNext()){
+        		GoldDiggerPlugin plugin = plugins.next();
+        		if (plugin instanceof FieldUpdatePlugin){
+        			((FieldUpdatePlugin) plugin).update(goldField);
+        		}
+        	}
+        }
+    	
     }
 
     public Position getPosition() {
