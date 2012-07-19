@@ -23,7 +23,7 @@ public class PathExecutor {
     GameTask gameTask;
     EndingTask endingTask;
     int join_time = 30;
-    int game_time = 180;
+    int game_time = 60;
     int end_time = 10; // Seconds, as above
     boolean ending = false;
     
@@ -46,21 +46,22 @@ public class PathExecutor {
             System.out.println(join_time);
             if (join_time <= 0) {
 
+                gameTimer.schedule(gameTask, game_time * 1000);
                 this.cancel();
-                gameTimer.schedule(gameTask, 0);
             }
         }
     }
     
     class GameTask extends TimerTask {
     	public void run(){	
-    		game_time--;
-    		if (game_time <= 0){
-    			this.cancel();
-    			System.out.println("\"End of game\"");
-    		} else if (ending == true){
-    			this.cancel();
-    		}
+//    		game_time--;
+//    		if (game_time <= 0){
+//    			this.cancel();
+//    			System.out.println("\"End of game\"");
+//    		} else if (ending == true){
+//    			this.cancel();
+//    		}
+    		join_time = 1;
     	}
     }
     
