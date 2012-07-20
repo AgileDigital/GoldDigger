@@ -180,8 +180,8 @@ public class Digger implements Convertable{
         }
     }
 
-    public String getView() {
-        return goldField.getDiggerView(this);
+    public String getView(String encoding) {
+        return goldField.getDiggerView(this, encoding);
     }
 
     public GoldField getGoldField() {
@@ -201,7 +201,7 @@ public class Digger implements Convertable{
 
 	@Override
 	public String toJSON() {
-		return "\"digger\":{\"id\":\"" + name + "\",\"latitude\":" + position.getLatitude() + ",\"longitude\":" + position.getLongitude() + ",\"carrying\":" + carrying + "}";
+		return "\"digger\":{\"id\":\"" + name + "\", \"latitude\":" + position.getLatitude() + ", \"longitude\":" + position.getLongitude() + ", \"carrying\":" + carrying + "}";
 	}
     
 

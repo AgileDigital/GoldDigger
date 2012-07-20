@@ -49,7 +49,7 @@ public class GoldSquare extends Square {
 	public String getJSONAttributes() {
 		if(nrOfGoldPieces > 0)
 		{
-			return ",\"goldleft\":" +  nrOfGoldPieces + "";
+			return ", \"goldleft\":" +  nrOfGoldPieces + "";
 		}
 		else
 		{

@@ -60,8 +60,8 @@ public class GoldField {
         return maxLongitude;
     }
 
-    public String getDiggerView(Digger digger) {
-        return constructDiggerView(digger);
+    public String getDiggerView(Digger digger, String encoding) {
+        return constructDiggerView(digger, encoding);
     }
     
     
@@ -73,19 +73,13 @@ public class GoldField {
     * @return view as a String that will be sent to the client via HTTP
     */
         
-    public String constructDiggerView(Digger digger) {
+    public String constructDiggerView(Digger digger, String encoding) {
     	String view = "";
     	String new_line = "";
     	String view_line = "";
     	Boolean add_view_line = false;
-    	Boolean JSON = true;
     	
-    	if(JSON)
-    	{
-    		view += "\"view\":{\n" + "\"number-of-sides\":" + number_of_sides + "";
-    		view += ",\n" + "\"line-of-sight-length\":" + line_of_sight_length + "";
-    		view += ",\n" + "\"tiles\":\n[\n";
-    	}
+    	
     	
     	// a string of unknown tile symbols to be added to centre the digger
     	String wrapper = "";
@@ -172,121 +166,89 @@ public class GoldField {
 		}
 				
 				
-				
-    	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
-    	// array to return to the client
-    	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
-			new_line = "";
-			view_line = "[";
-			add_view_line = false;
-			for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
-				// ensure that we are not out of bounds of latitude
-				if ((digger_lat + deltaLat) >= 0 && (digger_lat + deltaLat) < squares.length) {
-					// ensure that we are not out of bounds of longitude
-					if ((digger_long + deltaLong) >= 0 && (digger_long + deltaLong) < squares[0].length) {
-						int lat = digger_lat + deltaLat;
-						int longt = digger_long + deltaLong;
-						
-						// only make those tiles visible who have been marked as
-						// checked or true - the outermost layer is true, while the inner layers
-						// are checked
-						if (visibleTiles[lat][longt] == "Checked" || visibleTiles[lat][longt] == "True"){
-							if(unoccludedTiles[lat][longt] != "?")
-							{
-								Square square = squares[lat][longt];
-				    			square.viewed();
-				    			if(JSON)
-				    			{
-				    				if(!view_line.endsWith("["))
-									{
-										view_line += ",";
-									}
-				    				view_line += square.toJSON();
-				    			}
-				    			else
-				    			{
-				    				view_line += square;
-				    			}
-							}
-							else if(unoccludedTiles[lat][longt] == "?")
-							{
-								if(JSON)
-				    			{
-									if(!view_line.endsWith("["))
-									{
-										view_line += ",";
-									}
-				    				view_line += "\"tile\":{\"type\":\"unknown\"}";
-				    			}
-				    			else
-				    			{
+		if(encoding.equals("json"))
+		{
+			view = getViewJSON(digger_lat, digger_long, visibleTiles, unoccludedTiles, digger);
+		}
+		else
+		{
+	    	// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
+	    	// array to return to the client
+	    	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
+				new_line = "";
+				view_line = "";
+				add_view_line = false;
+				for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
+					// ensure that we are not out of bounds of latitude
+					if ((digger_lat + deltaLat) >= 0 && (digger_lat + deltaLat) < squares.length) {
+						// ensure that we are not out of bounds of longitude
+						if ((digger_long + deltaLong) >= 0 && (digger_long + deltaLong) < squares[0].length) {
+							int lat = digger_lat + deltaLat;
+							int longt = digger_long + deltaLong;
+							
+							// only make those tiles visible who have been marked as
+							// checked or true - the outermost layer is true, while the inner layers
+							// are checked
+							if (visibleTiles[lat][longt] == "Checked" || visibleTiles[lat][longt] == "True"){
+								if(unoccludedTiles[lat][longt] != "?")
+								{
+									Square square = squares[lat][longt];
+					    			square.viewed();
+					    			view_line += square;
+								}
+								else if(unoccludedTiles[lat][longt] == "?")
+								{
+					    				view_line += "?";
+								}
+				    			new_line = "\n";
+				    			add_view_line = true;
+				    			
+							} else {
 				    				view_line += "?";
-				    			}
 							}
-
-							if(JSON)
-			    			{
-			    				new_line = "]\n";
-			    			}
-			    			else
-			    			{
-			    				new_line = "\n";
-			    			}
-			    			add_view_line = true;
-			    			
 						} else {
-							if(JSON)
-			    			{
-			    				view_line += "\"tile\":{\"type\":\"unknown\"}";
-			    			}
-			    			else
-			    			{
-			    				view_line += "?";
-			    			}
-						}
-					} else {
-						if(centreDigger){
-							
-							if ((digger_long + deltaLong) < 0) { 
-							
-								view_line = wrapper_tile_symbol + view_line;
+							if(centreDigger){
 								
-							} else if ((digger_long + deltaLong) >= squares[0].length) {
+								if ((digger_long + deltaLong) < 0) { 
 								
-								view_line = view_line + wrapper_tile_symbol;
-								
+									view_line = wrapper_tile_symbol + view_line;
+									
+								} else if ((digger_long + deltaLong) >= squares[0].length) {
+									
+									view_line = view_line + wrapper_tile_symbol;
+									
+								}
 							}
 						}
 					}
 				}
-			}
-			wrapper = "";
-			if(centreDigger){
-				if ((digger_lat + deltaLat) < 0) {
-					
-					for (int m = 0; m < wrapper_length; m++) wrapper += wrapper_tile_symbol;
-					view = wrapper + "\n" + view;
-									
-				} else if ((digger_lat + deltaLat) >= squares.length) {
-					for (int m = 0; m < wrapper_length; m++) wrapper += wrapper_tile_symbol;
-					view = view + wrapper + "\n";
-					
+				wrapper = "";
+				if(centreDigger){
+					if ((digger_lat + deltaLat) < 0) {
+						
+						for (int m = 0; m < wrapper_length; m++) wrapper += wrapper_tile_symbol;
+						view = wrapper + "\n" + view;
+										
+					} else if ((digger_lat + deltaLat) >= squares.length) {
+						for (int m = 0; m < wrapper_length; m++) wrapper += wrapper_tile_symbol;
+						view = view + wrapper + "\n";
+						
+					}
+		    	}
+				// if this line of view is to be added, add it and format it with a new line character
+				if (add_view_line) {
+					view += view_line + new_line;
 				}
-	    	}
-			// if this line of view is to be added, add it and format it with a new line character
-			if (add_view_line) {
-				view += view_line + new_line;
 			}
+	    	
 		}
-    	if(JSON)
-    	{
-    		view += "]\n";
-    		view += digger.toJSON() + "\n}";
-    	}
-    	return view;
+	    	return view;
     }
     
-    public String getField(Digger digger) {
+    
+
+
+	public String getField(Digger digger) {
         String result = "";
         for(int lat=1;lat<=getMaxLatitude();lat++) {
             for(int lon=1;lon<=getMaxLongitude();lon++) {
@@ -418,6 +380,72 @@ public class GoldField {
 		this.pluginService = pluginService;
 	}
     
+	
+	private String getViewJSON(int digger_lat, int digger_long, String[][] visibleTiles, String[][] unoccludedTiles, Digger digger) {
+    	String new_line;
+    	String view_line;
+    	Boolean add_view_line;
+    	String view;
+
+    		view = "\"view\":{\n" + "\"number-of-sides\":" + number_of_sides + "";
+    		view += ",\n" + "\"line-of-sight-length\":" + line_of_sight_length + "";
+    		view += ",\n" + "\"tiles\":\n[\n";
+    	
+    		// run through the visible tiles array, and construct a view from the corresponding tiles in the squares
+	    	// array to return to the client
+	    	for (int deltaLat = (-1*line_of_sight_length); deltaLat <= line_of_sight_length; deltaLat++){
+				new_line = "";
+				view_line = "[";
+				add_view_line = false;
+				for (int deltaLong = (-1*line_of_sight_length); deltaLong <= line_of_sight_length; deltaLong++){
+					// ensure that we are not out of bounds of latitude
+					if ((digger_lat + deltaLat) >= 0 && (digger_lat + deltaLat) < squares.length) {
+						// ensure that we are not out of bounds of longitude
+						if ((digger_long + deltaLong) >= 0 && (digger_long + deltaLong) < squares[0].length) {
+							int lat = digger_lat + deltaLat;
+							int longt = digger_long + deltaLong;
+							
+							// only make those tiles visible who have been marked as
+							// checked or true - the outermost layer is true, while the inner layers
+							// are checked
+							if (visibleTiles[lat][longt] == "Checked" || visibleTiles[lat][longt] == "True"){
+								if(unoccludedTiles[lat][longt] != "?")
+								{
+									Square square = squares[lat][longt];
+					    			square.viewed();
+					    			if(!view_line.endsWith("["))
+					    			{
+					    				view_line += ", ";
+					    			}
+					    			view_line += square.toJSON();
+								}
+								else if(unoccludedTiles[lat][longt] == "?")
+								{
+									view_line += "\"tile\":{\"type\":\"unknown\"}";
+								}
+				    			new_line = "\n";
+				    			add_view_line = true;
+				    			
+							} else {
+								view_line += "\"tile\":{\"type\":\"unknown\"}";
+							}
+						}
+					}
+				}
+				
+				// if this line of view is to be added, add it and format it with a new line character
+				if (add_view_line) {
+					view += view_line + new_line;
+				}
+			}
+	    	view += "]\n";
+	    	view += digger.toJSON() + "\n}";
+	    	
+		return view;
+	}
+	
+
+	
     
   //Occlusion Functions
   	private  String[][] checkOcclusion(Digger digger, String[][] unoccludedTiles)

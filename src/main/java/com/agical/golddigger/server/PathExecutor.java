@@ -55,7 +55,12 @@ public class PathExecutor {
         int numberOfSides = digger.getGoldField().getNumberOfSides();
         try {
             if (action.equals("view")) {
-                writer.write(digger.getView());
+            	String encoding = "";
+            	if(splitPath.length > 3)
+            	{
+            		encoding = splitPath[3].toLowerCase();
+            	}
+                writer.write(digger.getView((encoding)));
             }
             if (action.equals("score")) {
                 int goldInTheBank = digger.getGoldInTheBank();
