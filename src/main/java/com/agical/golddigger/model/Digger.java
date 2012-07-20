@@ -180,6 +180,9 @@ public class Digger implements Convertable{
         }
     }
 
+    public String getView() {
+        return goldField.getDiggerView(this, "");
+    }
     public String getView(String encoding) {
         return goldField.getDiggerView(this, encoding);
     }
