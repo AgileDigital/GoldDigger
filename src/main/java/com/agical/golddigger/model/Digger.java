@@ -85,6 +85,7 @@ public class Digger {
     }
     
     private void update() {
+    	
         golddiggerNotifier.map(updateListeners.apply(this), Functions.<Unit>constantly(Unit.unit));
 
         if (goldField.getPluginService() != null){
@@ -96,6 +97,7 @@ public class Digger {
         		}
         	}
         }
+    	
     }
 
     public Position getPosition() {
