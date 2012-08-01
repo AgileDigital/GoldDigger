@@ -18,6 +18,7 @@ import com.agical.golddigger.model.Position;
 import com.agical.jambda.Functions;
 
 public class PathExecutor {
+
 	private final Diggers diggers;
 	private final Writer log;
 	Timer timer, gameTimer, endingTimer;
@@ -28,6 +29,7 @@ public class PathExecutor {
 	int endTime = 10; // Seconds, as above
 	int totalTime;
 	boolean ending = false;
+	private final int NUMBER_OF_PLAYERS = 8;
 
 	/** ANUS-24 experimental code **/
 	// The maximum number of commands an individual digger can send before
@@ -58,10 +60,10 @@ public class PathExecutor {
 		gameTimer = new Timer();
 		gameTask = new GameTask();
 		gameTimer.schedule(gameTask, (totalTime) * 1000L);
-		
+
 		/** ANUS-24 experimental code **/
 		commandCounter = new HashMap<String, Integer>();
-		
+
 		System.out.println(diggers.getDiggers().toString());
 		
 		for (Digger d : diggers.getDiggers()) { // Initialise the counters
@@ -69,18 +71,15 @@ public class PathExecutor {
 		}
 		// Checking the contents
 		for (String key : commandCounter.keySet()) {
-			System.out.println("commandCounter contents: " + key + ", "
-					+ commandCounter.get(key));
+			System.out.println("commandCounter contents: " + key + ", " + commandCounter.get(key));
 		}
 
 		// command_queue = new LinkedList<String>();
 		// Make enough space in the array
-		commandQueue = new String[diggers.getDiggers().size()
-				* MAX_PREGAME_COMMANDS];
+		commandQueue = new String[diggers.getDiggers().size() * MAX_PREGAME_COMMANDS];
 		queueIndex = 0;
 		/** x **/
-		
-		}
+
 	}
 
 	class JoinTask extends TimerTask {
@@ -115,7 +114,7 @@ public class PathExecutor {
 	}
 
 	public void executePath(String pathInfo, PrintWriter writer) {
-		
+
 		String[] splitPath = pathInfo.split("/");
 		String actor = splitPath[0];
 		if (actor.equals("digger")) {
@@ -123,16 +122,15 @@ public class PathExecutor {
 			/** ANUS-24 experimental code **/
 			// If join time has not expired then queue the commands from diggers
 			String secretName = splitPath[1];
-			int no_queued_commands = commandCounter.get(secretName);
 			if (joinTime > 0) { // Before game begins
 				// If the digger already has max commands queued just drop new
 				// ones
+				int no_queued_commands = commandCounter.get(secretName);
 				if (no_queued_commands < MAX_PREGAME_COMMANDS) {
 					commandQueue[queueIndex] = pathInfo;
 					queueIndex++;
 					commandCounter.put(secretName, no_queued_commands + 1);
-					System.out.println("Now queuing :" + secretName + ", "
-							+ no_queued_commands + ", " + queueIndex);
+					System.out.println("Now queuing :" + secretName + ", " + no_queued_commands + ", " + queueIndex);
 				}
 			} else {
 				handleDigger(writer, splitPath);
@@ -146,8 +144,7 @@ public class PathExecutor {
 			String action = splitPath[2];
 			if (action.equals("listdiggers")) {
 				for (Digger digger : diggers.getDiggers()) {
-					writer.write(digger.getName() + " "
-							+ digger.getSecretName() + "\n");
+					writer.write(digger.getName() + " " + digger.getSecretName() + "\n");
 				}
 			} else if (action.equals("add")) {
 				String newName = splitPath[3];
@@ -184,8 +181,7 @@ public class PathExecutor {
 
 					// Players should bank
 					if (!digger.getGoldField().hasGold() && endTime <= gameTime) {
-						System.out
-								.println("Last piece of gold collected, x seconds remaining to bank");
+						System.out.println("Last piece of gold collected, x seconds remaining to bank");
 						ending = true;
 						endingTimer.schedule(endingTask, endTime * 1000L);
 					}
@@ -223,80 +219,30 @@ public class PathExecutor {
 
 					if (numberOfSides == 4) {
 						if (direction.equals("north")) {
-							writer.write(digger
-									.move(Position.NORTH)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.NORTH).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("east")) {
-							writer.write(digger
-									.move(Position.EAST)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.EAST).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("west")) {
-							writer.write(digger
-									.move(Position.WEST)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.WEST).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("south")) {
-							writer.write(digger
-									.move(Position.SOUTH)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.SOUTH).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else {
 							writer.write("Cannot Move in that direction");
 						}
 					} else if (numberOfSides == 6) {
 
 						if (direction.equals("north_east")) {
-							writer.write(digger
-									.move(Position.NORTH_EAST)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.NORTH_EAST).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("south_east")) {
-							writer.write(digger
-									.move(Position.SOUTH_EAST)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.SOUTH_EAST).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("north_west")) {
-							writer.write(digger
-									.move(Position.NORTH_WEST)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.NORTH_WEST).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("south_west")) {
-							writer.write(digger
-									.move(Position.SOUTH_WEST)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.SOUTH_WEST).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("south")) {
-							writer.write(digger
-									.move(Position.SOUTH)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.SOUTH).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else if (direction.equals("north")) {
-							writer.write(digger
-									.move(Position.NORTH)
-									.map(Functions
-											.<Position, String> constantly(ok),
-											Functions
-													.<String> constantly(failed)));
+							writer.write(digger.move(Position.NORTH).map(Functions.<Position, String> constantly(ok), Functions.<String> constantly(failed)));
 						} else {
 							writer.write("Cannot Move in that direction");
 						}
@@ -337,8 +283,7 @@ public class PathExecutor {
 			BufferedReader bufferedReader = new BufferedReader(reader);
 			PrintWriter writer = new PrintWriter(new VoidOutputStream());
 			while ((logRow = bufferedReader.readLine()) != null) {
-				long timestamp = Long.parseLong(logRow.substring(0,
-						logRow.indexOf(" ")));
+				long timestamp = Long.parseLong(logRow.substring(0, logRow.indexOf(" ")));
 				long timeSinceLog = System.currentTimeMillis() - timestamp;
 				if (timeSinceLog < delay) {
 					Thread.sleep(delay - timeSinceLog);
@@ -354,8 +299,7 @@ public class PathExecutor {
 	private void restoreFromQueue() {
 		// If queueIndex is zero then it means there are no commands queued
 		if (queueIndex != 0) {
-			RestoreFromQueueThread[] threads = new RestoreFromQueueThread[diggers
-					.getDiggers().size()];
+			RestoreFromQueueThread[] threads = new RestoreFromQueueThread[diggers.getDiggers().size()];
 			int i = 0;
 			for (Digger d : diggers.getDiggers()) {
 				threads[i] = new RestoreFromQueueThread(d.getSecretName());
@@ -374,14 +318,12 @@ public class PathExecutor {
 
 		public void run() {
 			for (int i = 0; i <= queueIndex; i++) {
-				System.out.println("The next command for me is: "
-						+ commandQueue[i] + "and the secretName is: ...");
+				System.out.println("The next command for me is: " + commandQueue[i] + "and the secretName is: ...");
 				if ((commandQueue[i].split("/"))[1] == secretName) {
 					executePath(commandQueue[i], null);
 				}
 			}
-			System.out.println("The thead for: " + secretName
-					+ " has reached the end of its queue");
+			System.out.println("The thead for: " + secretName + " has reached the end of its queue");
 		}
 	}
 
