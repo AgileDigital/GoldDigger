@@ -7,8 +7,12 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,17 +33,16 @@ public class PathExecutor {
 	int endTime = 10; // Seconds, as above
 	int totalTime;
 	boolean ending = false;
-	private final int NUMBER_OF_PLAYERS = 8;
 
 	/** ANUS-24 experimental code **/
 	// The maximum number of commands an individual digger can send before
 	// the next commands are dropped/ignored
 	private final int MAX_PREGAME_COMMANDS = 10;
 	// The queue that holds the incoming pre-game commands from all diggers
-	private String[] commandQueue;
+//	private String[] commandQueue;
 	// Real queues and linked lists were hard to use (clone to be specific)
 	private int queueIndex;
-	// private Queue<String> command_queue;
+	 private Queue<String> commandQueueB;
 	// Keeps count of the number of commands sent by each digger
 	private Map<String, Integer> commandCounter;
 
@@ -64,19 +67,18 @@ public class PathExecutor {
 		/** ANUS-24 experimental code **/
 		commandCounter = new HashMap<String, Integer>();
 
-		System.out.println(diggers.getDiggers().toString());
-		
-		for (Digger d : diggers.getDiggers()) { // Initialise the counters
-			commandCounter.put(d.getName(), 0);
-		}
-		// Checking the contents
-		for (String key : commandCounter.keySet()) {
-			System.out.println("commandCounter contents: " + key + ", " + commandCounter.get(key));
-		}
+//		System.out.println(diggers.getDiggers().toString());
+//		
+//		for (Digger d : diggers.getDiggers()) { // Initialise the counters
+//			commandCounter.put(d.getName(), 0);
+//		}
+//		// Checking the contents
+//		for (String key : commandCounter.keySet()) {
+//			System.out.println("commandCounter contents: " + key + ", " + commandCounter.get(key));
+//		}
 
-		// command_queue = new LinkedList<String>();
+		commandQueueB = new LinkedList<String>();
 		// Make enough space in the array
-		commandQueue = new String[diggers.getDiggers().size() * MAX_PREGAME_COMMANDS];
 		queueIndex = 0;
 		/** x **/
 
@@ -87,11 +89,8 @@ public class PathExecutor {
 			joinTime--;
 			System.out.println(joinTime);
 			if (joinTime <= 0) {
-				// Checking the contents
-				if (queueIndex != 0) {
-					for (int i = 0; i < queueIndex; i++) {
-						System.out.println("Queued :" + commandQueue[i]);
-					}
+				// Start processing the queued commands because game has started
+				if (!commandQueueB.isEmpty()) {
 					restoreFromQueue();
 				}
 				this.cancel();
@@ -117,20 +116,22 @@ public class PathExecutor {
 
 		String[] splitPath = pathInfo.split("/");
 		String actor = splitPath[0];
+		
 		if (actor.equals("digger")) {
 
 			/** ANUS-24 experimental code **/
-			// If join time has not expired then queue the commands from diggers
 			String secretName = splitPath[1];
+			int noQueuedCommands = 0;
+			
 			if (joinTime > 0) { // Before game begins
-				// If the digger already has max commands queued just drop new
-				// ones
-				int no_queued_commands = commandCounter.get(secretName);
-				if (no_queued_commands < MAX_PREGAME_COMMANDS) {
-					commandQueue[queueIndex] = pathInfo;
-					queueIndex++;
-					commandCounter.put(secretName, no_queued_commands + 1);
-					System.out.println("Now queuing :" + secretName + ", " + no_queued_commands + ", " + queueIndex);
+
+				if (commandCounter.containsKey(secretName)){
+					noQueuedCommands = commandCounter.get(secretName);
+				}
+				if (noQueuedCommands < MAX_PREGAME_COMMANDS) {
+					commandQueueB.offer(pathInfo);
+					commandCounter.put(secretName, noQueuedCommands + 1);
+					System.out.println("Now queuing \"" + pathInfo + "\", commands queued by this digger: " + (noQueuedCommands + 1));
 				}
 			} else {
 				handleDigger(writer, splitPath);
@@ -297,33 +298,42 @@ public class PathExecutor {
 	}
 
 	private void restoreFromQueue() {
-		// If queueIndex is zero then it means there are no commands queued
-		if (queueIndex != 0) {
-			RestoreFromQueueThread[] threads = new RestoreFromQueueThread[diggers.getDiggers().size()];
+			System.out.println(Arrays.toString(commandQueueB.toArray()));
+			Set<String> queuedDiggers = commandCounter.keySet();
+			String[] commandArray = new String[commandQueueB.size()];
+			
+			for(int i = 0; commandQueueB.iterator().hasNext(); i++){ // Try alternate for loop form later
+				commandArray[i] = commandQueueB.poll();
+			}
+			System.out.println(Arrays.toString(commandArray));
+			
+			RestoreFromQueueThread[] threads = new RestoreFromQueueThread[queuedDiggers.size()];
 			int i = 0;
-			for (Digger d : diggers.getDiggers()) {
-				threads[i] = new RestoreFromQueueThread(d.getSecretName());
-				System.out.println("New thread " + d.getName() + " starting");
+			for (String d : queuedDiggers) { // d is the secretName
+				threads[i] = new RestoreFromQueueThread(d, commandArray);
 				threads[i].start();
 			}
-		}
 	}
 
 	class RestoreFromQueueThread extends Thread {
 		String secretName;
+		String commandArray[]; //Working on using a queue instead of an array
+		PrintWriter writer = new PrintWriter(new VoidOutputStream());
 
-		RestoreFromQueueThread(String secretName) {
+		RestoreFromQueueThread(String secretName, String[] queue) {
 			this.secretName = secretName;
+			this.commandArray = queue;
 		}
 
 		public void run() {
-			for (int i = 0; i <= queueIndex; i++) {
-				System.out.println("The next command for me is: " + commandQueue[i] + "and the secretName is: ...");
-				if ((commandQueue[i].split("/"))[1] == secretName) {
-					executePath(commandQueue[i], null);
+			System.out.println("New thread for " + secretName + " starting");
+			for (int i = 0; i < commandArray.length; i++) {
+				if ((commandArray[i].split("/"))[1].equals(secretName)) {
+					System.out.println("The next command for me is: " + commandArray[i] + " and my secretName is obviously: " + secretName);
+					executePath(commandArray[i], writer);
 				}
 			}
-			System.out.println("The thead for: " + secretName + " has reached the end of its queue");
+			System.out.println("The thread for " + secretName + " has reached the end of its command queue");
 		}
 	}
 
