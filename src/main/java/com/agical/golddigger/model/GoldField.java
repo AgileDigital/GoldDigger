@@ -807,7 +807,13 @@ public class GoldField {
   	}
   	
   	
+  	public void setSquare(Position position, Square square){
+  		squares[position.getLatitude()][position.getLongitude()] = square;
+  	}
   	
+  	public void setField(Square[][] squares){
+  		this.squares = squares.clone();
+  	}
   //Testing functions
   	private void prEq(double[] equations) 
   	{

@@ -189,6 +189,10 @@ public class Digger {
     public GoldField getGoldField() {
         return goldField;
     }
+    
+    public void setGoldField(Square[][] squares){
+    	this.goldField.setField(squares.clone());
+    }
 
 
     public void grab() {
