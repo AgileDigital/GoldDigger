@@ -168,7 +168,7 @@ public class GoldField {
 				
 		if(encoding.equals("json"))
 		{
-			view = getViewJSON(digger_lat, digger_long, visibleTiles, unoccludedTiles, digger);
+			view = getViewJSON(visibleTiles, unoccludedTiles, digger);
 		}
 		else
 		{
@@ -380,12 +380,22 @@ public class GoldField {
 		this.pluginService = pluginService;
 	}
     
-	
-	private String getViewJSON(int digger_lat, int digger_long, String[][] visibleTiles, String[][] unoccludedTiles, Digger digger) {
+	/**
+	 * Returns a JSON encoded string "view" object and containing information about the 
+	 * field, tiles and digger based on what the player who called the view command.
+	 * 
+	 * @param visibleTiles is a 2D array of all tiles within line of sight range
+	 * @param unoccludedTiles is a 2D array all tiles not blocked by other tiles
+	 * @param digger belonging to the player that called this view command
+	 * @return string view in JSON format
+	 */
+	private String getViewJSON(String[][] visibleTiles, String[][] unoccludedTiles, Digger digger) {
     	String new_line;
     	String view_line;
     	Boolean add_view_line;
     	String view;
+    	int digger_lat = digger.getPosition().getLatitude();
+    	int digger_long = digger.getPosition().getLongitude();
 
     		view = "\"view\":{\n" + "\"number-of-sides\":" + number_of_sides + "";
     		view += ",\n" + "\"line-of-sight-length\":" + line_of_sight_length + "";
@@ -438,7 +448,7 @@ public class GoldField {
 					view += view_line + new_line;
 				}
 			}
-	    	view += "]\n";
+	    	view += "],\n";
 	    	view += digger.toJSON() + "\n}";
 	    	
 		return view;
