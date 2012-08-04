@@ -329,7 +329,7 @@ public class PathExecutor {
 			System.out.println("New thread for " + secretName + " starting");
 			for (int i = 0; i < commandArray.length; i++) {
 				if ((commandArray[i].split("/"))[1].equals(secretName)) {
-					System.out.println("The next command for me is: " + commandArray[i] + " and my secretName is obviously: " + secretName);
+					System.out.println("The next command for me is: " + commandArray[i]);
 					executePath(commandArray[i], writer);
 				}
 			}
