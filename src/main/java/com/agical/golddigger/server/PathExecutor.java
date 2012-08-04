@@ -312,6 +312,7 @@ public class PathExecutor {
 			for (String d : queuedDiggers) { // d is the secretName
 				threads[i] = new RestoreFromQueueThread(d, commandArray);
 				threads[i].start();
+				i++;
 			}
 	}
 
