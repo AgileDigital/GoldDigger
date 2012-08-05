@@ -191,7 +191,7 @@ public class Digger {
     }
     
     public void setGoldField(Square[][] squares){
-    	this.goldField.setField(squares.clone());
+    	this.goldField.setField(squares);
     }
 
 

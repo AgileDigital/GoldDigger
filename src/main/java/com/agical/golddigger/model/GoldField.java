@@ -5,6 +5,7 @@ import com.agical.golddigger.PluginService;
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.fieldcreator.EmptyFieldCreator;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
+import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
 import com.agical.golddigger.model.tiles.Square;
 import com.agical.jambda.Option;
 import com.agical.jambda.Functions.Fn1;
@@ -265,7 +266,7 @@ public class GoldField {
     }
     
     public Square[][] getSquares() {
-		return squares;
+		return squares.clone();
 	}
 
     public boolean hasGold() {
@@ -811,8 +812,12 @@ public class GoldField {
   		squares[position.getLatitude()][position.getLongitude()] = square;
   	}
   	
-  	public void setField(Square[][] squares){
-  		this.squares = squares.clone();
+  	public void setField(Square[][] field){
+  		int x = 0;
+  		for(Square[] innerArray: field){
+  			this.squares[x] = innerArray.clone();
+  			x++;
+  		}
   	}
   //Testing functions
   	private void prEq(double[] equations) 
