@@ -15,6 +15,7 @@ import com.agical.golddigger.model.Diggers;
 import com.agical.golddigger.model.GoldField;
 import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+import com.agical.golddigger.model.tiles.BankSquare;
 import com.agical.golddigger.model.tiles.HillSquare;
 import com.agical.golddigger.model.tiles.Square;
 import com.agical.golddigger.model.tiles.WallSquare;
@@ -111,6 +112,7 @@ public class PathExecutor {
                     	if(multiplayerdiggers.indexOf(digger) > 0) {
                     		System.out.println("asdasdsad");
                     		digger.setPosition(new Position(1,3));
+                    		multiplayerSquares[3][1]=new BankSquare(digger.getName());
                     		updateGoldFields(multiplayerdiggers);
                     		
                     	}
