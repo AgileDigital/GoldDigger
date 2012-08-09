@@ -84,10 +84,17 @@ public class PathExecutor {
                 writer.write((carriedAfter - carriedBefore) + "\n");
             }
             if (action.equals("drop")) {
+            	BankSquare tempBankSquare = (BankSquare)(Position.square.apply(digger.getPosition(), digger.getGoldField()));
+            	
+            	if (tempBankSquare.getName()!=digger.getName()){
+            		writer.write("THIS IS NOT YOUR BANK\n");
+            		
+            	}else{
                 int carriedBefore = digger.getCarriedGold();
                 digger.drop();
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedBefore - carriedAfter) + "\n");
+            	}
             }
             if (action.equals("carrying")) {
                 writer.write(digger.getCarriedGold() + "\n");
@@ -112,7 +119,7 @@ public class PathExecutor {
                     	if(multiplayerdiggers.indexOf(digger) > 0) {
                     		System.out.println("asdasdsad");
                     		digger.setPosition(new Position(1,3));
-                    		multiplayerSquares[3][1]=new BankSquare(digger.getName());
+                    		multiplayerSquares[1][3]=new BankSquare(digger.getName());
                     		updateGoldFields(multiplayerdiggers);
                     		
                     	}
