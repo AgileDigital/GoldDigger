@@ -81,4 +81,8 @@ public class GameHandler extends HttpServlet {
             executingSecrets.remove(sync);
         }
     }
+    
+    public void setMultiplayer(){
+    	this.pathExecutor.setMultiplayer(true);
+    }
 }

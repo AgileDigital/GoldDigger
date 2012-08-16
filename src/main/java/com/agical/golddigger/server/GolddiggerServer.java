@@ -41,6 +41,24 @@ public class GolddiggerServer {
         }
         
     }
+    
+    public void startForMultiplayer(Diggers diggers, String logFile) {
+        try {
+            server = new Server(port);
+            Context root = new Context(server, "/", Context.SESSIONS);
+            GameHandler multiplayerGameHandler= new GameHandler(diggers, logFile);
+            multiplayerGameHandler.setMultiplayer();
+            root.addServlet(new ServletHolder(multiplayerGameHandler), "/" + contextName + "/*");
+            root.setResourceBase(new File("./target/site").getAbsolutePath());
+            root.addServlet(DefaultServlet.class.getName(), "/");
+
+            server.start();
+            System.out.println("startServer");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
+    }
 
     public void stop() {
         try {
