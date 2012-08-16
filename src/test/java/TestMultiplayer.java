@@ -17,7 +17,9 @@ import com.agical.golddigger.model.Position;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.ResourceFieldCreator;
 import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+import com.agical.golddigger.model.tiles.BankSquare;
 import com.agical.golddigger.server.GolddiggerServer;
+import com.agical.golddigger.server.PathExecutor;
 import com.agical.jambda.Functions.Fn0;
 import com.meterware.httpunit.WebConversation;
 import com.meterware.httpunit.WebResponse;
@@ -47,7 +49,7 @@ public class TestMultiplayer {
 	private GoldField square_2;
 	
     private static String map = "wwwwwwww\n" +
-    							  "wb....bw\n" +
+    							  "wb2..2bw\n" +
     							  "wwwwwwww\n";
 	
 	private String createSetting(int los_length, int no_of_sides) {
@@ -60,7 +62,7 @@ public class TestMultiplayer {
 		Fn0<FieldCreator> ff = new Fn0<FieldCreator>(){
     		@Override
 			public FieldCreator apply() {
-				return new StringFieldCreator(createSetting(6,4) + map);
+				return new StringFieldCreator(createSetting(2,4) + map);
 			}
     	};
 		/* Should have a multiplayer map in the test maps folder */
@@ -87,6 +89,7 @@ public class TestMultiplayer {
 	 */
 	@Test
 	public void testDiggerCollision() throws Exception {
+		
 		diggerA.setPosition(new Position(1, 1));
 		diggerB.setPosition(new Position(1, 6));
 		
@@ -95,23 +98,100 @@ public class TestMultiplayer {
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
-		System.out.println(response.getText() + "," + diggerB.getPosition().toString());
+		//System.out.println(response.getText() + "," + diggerB.getPosition().toString());
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
-		System.out.println(diggerA.getView()); //Checks where it thinks the other digger is which should be
+		//System.out.println(diggerA.getView()); //Checks where it thinks the other digger is which should be
 											  //at 1,2
 		
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
-		assertEquals("FAILED\n",response.getText()); //Digger B fails to move onto digger A
+		assertEquals("DiggerB moved through diggerA","FAILED\n",response.getText()); //Digger B fails to move onto digger A
 		
 		
 		System.out.println(response.getText() + "," + diggerB.getPosition().toString());
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/move/east");
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/view");
-		System.out.println(response.getText()+ "," + diggerA.getPosition().toString());
+		//System.out.println(response.getText()+ "," + diggerA.getPosition().toString());
 		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/move/west");
 		System.out.println(response.getText() + "," + diggerA.getPosition().toString());
-		assertEquals("FAILED\n",response.getText());
+		assertEquals("Digger A moved through diggerB","FAILED\n",response.getText());
 		System.out.println(response.getText());
+
+	}
+	
+	@Test
+	public void testOtherDiggerView() throws Exception {
+		diggerA.setPosition(new Position(1, 1));
+		diggerB.setPosition(new Position(1, 4));
+		
+		WebResponse response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/east");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/view");
+		assertEquals("diggerB should not be visible to A",	
+				"-----\n" +
+				"-www?\n" +
+		  		"-wb2.\n" +
+		  		"-www?\n" +
+		  		"-----\n" ,response.getText());
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
+		//System.out.println(diggerA.getView()); //Checks where it thinks the other digger is which should be
+											  //at 1,2
+		
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/view");
+		assertEquals("DiggerA fails to see diggerB two tiles to the right",	
+						"-----\n" +
+						"-www?\n" +
+				  		"-wb2o\n" +
+				  		"-www?\n" +
+				  		"-----\n" ,response.getText());
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/east");
+		assertEquals("DiggerB should have moved out of vision range of A",	
+				"-----\n" +
+				"?www?\n" +
+		  		"2..2b\n" +
+		  		"?www?\n" +
+		  		"-----\n" ,response.getText());
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/move/east");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/view");
+		assertEquals("DiggerB fails to see diggerA two tiles to the left",	
+				"-----\n" +
+				"?www?\n" +
+		  		"o..2b\n" +
+		  		"?www?\n" +
+		  		"-----\n" ,response.getText());
+
+	}
+	@Test
+	public void testDiggerBankOwnership() throws Exception {
+		WebResponse response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/grab");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/east");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/drop");
+		BankSquare tempBankSquare = (BankSquare)diggerB.getGoldField().getSquare(diggerB.getPosition());
+		assertEquals("DiggerB's Bank is not the same as it's name",diggerB.getName(), tempBankSquare.getName());
+		
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/move/east");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/grab");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/move/west");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/drop");
+		tempBankSquare = (BankSquare)diggerA.getGoldField().getSquare(diggerA.getPosition());
+		assertEquals("DiggerA's Bank is not the same as it's name",diggerA.getName(), tempBankSquare.getName());
+		
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/move/west");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/grab");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/move/east");
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/grab");
+		diggerB.setPosition(new Position(1, 1));
+		diggerA.setPosition(new Position(1, 6));
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameA/drop");
+		assertEquals("DiggerA dropped on B's Bank",PathExecutor.DROPONWRONGBANKMESSAGE, response.getText());
+		response = wc.getResponse("http://localhost:8066/golddigger/digger/secretnameB/drop");
+		assertEquals("DiggerB dropped on A's Bank",PathExecutor.DROPONWRONGBANKMESSAGE, response.getText());
+	}
+	
+	@Test
+	public void testDiggerStartsOnBank() throws Exception {
+		/*
+		 * TO DO MAYBE 
+		 */
 
 	}
 

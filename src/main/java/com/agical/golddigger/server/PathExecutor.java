@@ -29,7 +29,7 @@ public class PathExecutor {
     private final Diggers diggers;
     private final Writer log;
 	private boolean multiplayer = false;
-
+	public final static String DROPONWRONGBANKMESSAGE = "You are attempting to drop on someone else's Bank....";
 	public PathExecutor(Diggers diggers, Writer log) {
         super();
         this.diggers = diggers;
@@ -122,6 +122,10 @@ public class PathExecutor {
             if (action.equals("drop")) {
                 int carriedBefore = digger.getCarriedGold();
                 digger.drop();
+                if(digger.getGoldField().getSquare(digger.getPosition()) instanceof BankSquare){
+                	BankSquare tempBankSquare = (BankSquare)digger.getGoldField().getSquare(digger.getPosition());
+                	if(tempBankSquare.getName() == digger.getName()); writer.write(DROPONWRONGBANKMESSAGE);
+                }
                 int carriedAfter = digger.getCarriedGold();
                 writer.write((carriedBefore - carriedAfter) + "\n");
             }
