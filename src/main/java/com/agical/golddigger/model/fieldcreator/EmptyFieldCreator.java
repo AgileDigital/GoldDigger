@@ -47,4 +47,9 @@ public class EmptyFieldCreator extends FieldCreator {
     public int getNumberOfSides() {
         return number_of_sides;
     }
+    
+    @Override
+    public int getInitialTimerDuration() {
+        return 0;
+    }
 }

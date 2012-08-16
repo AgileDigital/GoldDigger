@@ -2,6 +2,7 @@ package com.agical.golddigger.gui;
 
 import com.agical.golddigger.model.Diggers;
 import com.agical.golddigger.model.PlayerReader;
+import com.agical.golddigger.model.ConfigReader;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
 import com.agical.golddigger.model.fieldcreator.fields.CompetitionFields;
 import com.agical.golddigger.server.AdminWebController;
@@ -13,15 +14,20 @@ import com.agical.jambda.Tuples;
 import com.agical.jambda.Tuples.Tuple2;
 
 import java.io.*;
+import java.net.URL;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
+
 public class GolddiggerGame {
 	private static Timer repaintTimer = new Timer();
 	private static final int repaintTimer_intial_delay = 1000;
-	private static final int repaintTimer_interval = 1000;
+	private static final int repaintTimer_delay = 1000;
+	
+	private static boolean multiplayer = false;
 	
     public static void main(String[] args) throws IOException {
     	
@@ -31,6 +37,7 @@ public class GolddiggerGame {
         startGameWithPlayback(2 * 60 * 1000L, 8066, 62986, "target/calls.log", "target/playBack.log");
         
         addPlayers(adminWebController);
+        
     }
 
     private static void addPlayers(AdminWebController adminWebController) throws IOException {
@@ -49,6 +56,8 @@ public class GolddiggerGame {
             adminWebController.add("FJonsaAS", "msndjfhi");
         }
     }
+    
+
 
     //Start a "master" game and a "slave" game 
     public static Tuple2<Tuple2<GolddiggerGui, GolddiggerServer>, Tuple2<GolddiggerGui, GolddiggerServer>> startGameWithPlayback(long delay, int port, int playbackPort, String mainLogFile, String playbackApplicationLogFile, String... restoreFile) throws IOException {
@@ -64,13 +73,14 @@ public class GolddiggerGame {
 
     public static Tuple2<GolddiggerGui, GolddiggerServer> startGameWithoutPlayback(int port, String mainLogFile, Fn0<FieldCreator> fieldCreator, String... restoreFile) {
         Diggers diggers = new Diggers(fieldCreator);
+
         GolddiggerServer golddiggerServer = new GolddiggerServer(port, "golddigger");
         golddiggerServer.start(diggers, mainLogFile);
         GolddiggerGui golddiggerGui = new GolddiggerGui(diggers, port);
 
         //Sets up a timer
         
-        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_interval);
+        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_delay);
         return Tuples.duo(golddiggerGui, golddiggerServer);
     }
 
@@ -103,13 +113,14 @@ public class GolddiggerGame {
 
         Tuple2<Diggers, GolddiggerServer> playbackDiggers = playbackGame.startGameFromLogWithDelay(playbackPort, delay, pipedReader, playbackApplicationLogFile);
         GolddiggerGui golddiggerGui = new GolddiggerGui(playbackDiggers.getFirst(), playbackPort);
-        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_interval);
+        repaintTimer.schedule(new RepaintTask(golddiggerGui), repaintTimer_intial_delay, repaintTimer_delay);
 
         return Tuples.duo(golddiggerGui, playbackDiggers.getSecond());
     }
 
     private Tuple2<Diggers, GolddiggerServer> startGameFromLogWithDelay(int playbackPort, final long delay, final Reader reader, String logFile) {
         final Diggers diggers = new Diggers(CompetitionFields.factory);
+
         GolddiggerServer golddiggerServer = new GolddiggerServer(playbackPort, "golddigger");
         golddiggerServer.start(diggers, logFile);
         Thread thread = new Thread(new Runnable() {

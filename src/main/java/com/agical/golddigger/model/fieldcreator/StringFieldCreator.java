@@ -19,14 +19,16 @@ public class StringFieldCreator extends FieldCreator {
     private Square[][] squares;
 	private PluginService pluginService;
     
-	public final static String TILES = "field-tiles",
-							   COSTS = "cost-per-type",
-							   LINE_OF_SIGHT = "line-of-sight",
-							   NO_OF_SIDES   = "number-of-sides",
-							   PLUGINS = "plugins";
+	public final static String	TILES = "field-tiles",
+								COSTS = "cost-per-type",
+								LINE_OF_SIGHT = "line-of-sight",
+								NO_OF_SIDES   = "number-of-sides",
+								PLUGINS = "plugins",
+								INITIAL_TIMER_DURATION = "initial-timer-duration";
 	
-    private static final int DEFAULT_NUMBER_OF_SIDES = 4,
-    						 DEFAULT_LINE_OF_SIGHT   = 1;
+    private static final int	DEFAULT_NUMBER_OF_SIDES = 4,
+    							DEFAULT_INITIAL_TIMER_DURATION = 0,
+    							DEFAULT_LINE_OF_SIGHT   = 1;
     
 	public StringFieldCreator(String result) {
 		this.result = result;
@@ -115,6 +117,19 @@ public class StringFieldCreator extends FieldCreator {
     	} catch (NumberFormatException e){
     		e.printStackTrace();
     		return DEFAULT_NUMBER_OF_SIDES;
+    	}
+    }
+    
+    @Override
+    public int getInitialTimerDuration() {
+    	String value = getAttribute(INITIAL_TIMER_DURATION);
+    	
+    	if (value == null) return DEFAULT_INITIAL_TIMER_DURATION;
+    	try {
+    		return Integer.parseInt(value);
+    	} catch (NumberFormatException e){
+    		e.printStackTrace();
+    		return DEFAULT_INITIAL_TIMER_DURATION;
     	}
     }
 

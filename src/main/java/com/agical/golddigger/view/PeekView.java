@@ -55,4 +55,6 @@ public interface PeekView {
 	void drawTeleport(int x, int y);
 
 	void drawForest(int x, int y);
+	
+	void drawOtherDigger(int x, int y);
 }

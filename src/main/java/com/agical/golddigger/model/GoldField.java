@@ -5,6 +5,7 @@ import com.agical.golddigger.PluginService;
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.fieldcreator.EmptyFieldCreator;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
+import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
 import com.agical.golddigger.model.tiles.Square;
 import com.agical.jambda.Option;
 import com.agical.jambda.Functions.Fn1;
@@ -25,6 +26,7 @@ public class GoldField {
 	private boolean occludeTiles = true;
 	private boolean centreDigger = true;
 	final static private String wrapper_tile_symbol = "-";
+	private int initial_timer_duration = 0;
     
     public void setGolddiggerNotifier(GolddiggerNotifier golddiggerNotifier) {
         this.golddiggerNotifier = golddiggerNotifier;
@@ -49,6 +51,7 @@ public class GoldField {
         line_of_sight_length = fieldCreator.getLineOfSightLength();
         number_of_sides = fieldCreator.getNumberOfSides();
         pluginService = fieldCreator.getPluginService();
+        initial_timer_duration = fieldCreator.getInitialTimerDuration();
     }
     
     
@@ -265,7 +268,7 @@ public class GoldField {
     }
     
     public Square[][] getSquares() {
-		return squares;
+		return squares.clone();
 	}
 
     public boolean hasGold() {
@@ -351,6 +354,10 @@ public class GoldField {
 
     public int getNumberOfSides(){
     	return number_of_sides;
+    }
+    
+    public int getInitialTimerDuration(){
+    	return initial_timer_duration;
     }
     
     public int getLOS(){
@@ -807,6 +814,17 @@ public class GoldField {
   	}
   	
   	
+	public void setSquare(Position position, Square square){
+		squares[position.getLatitude()][position.getLongitude()] = square;
+	}
+  	
+	public void setField(Square[][] field){
+		int x = 0;
+		for(Square[] innerArray: field){
+			this.squares[x] = innerArray.clone();
+			x++;
+		}
+	}
   	
   //Testing functions
   	private void prEq(double[] equations) 

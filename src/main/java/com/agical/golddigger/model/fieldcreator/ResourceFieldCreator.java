@@ -56,6 +56,11 @@ public class ResourceFieldCreator extends FieldCreator {
     public int getNumberOfSides() {
         return fieldCreator.getNumberOfSides();
     }
+    
+    @Override
+    public int getInitialTimerDuration() {
+    	return fieldCreator.getInitialTimerDuration();
+    }
 
 	public static Fn0<FieldCreator> factory(
 			final Class<?> location) {

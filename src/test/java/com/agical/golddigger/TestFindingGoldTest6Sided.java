@@ -40,6 +40,11 @@ public class TestFindingGoldTest6Sided {
 		public int getLineOfSightLength() {
 			return 1;
 		}
+		
+		@Override
+        public int getInitialTimerDuration() {
+            return 0;
+        }
     }
 
     @Before

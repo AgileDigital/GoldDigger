@@ -120,6 +120,11 @@ public class RandomFieldCreator extends FieldCreator {
         return number_of_sides;
     }
     
+    @Override
+    public int getInitialTimerDuration() {
+        return 0;
+    }
+    
     private List<Square> getAvailable() {
         int nrOfGoldItems2 = nrOfGoldItems;
         int nrOfWalls2 = nrOfWalls;

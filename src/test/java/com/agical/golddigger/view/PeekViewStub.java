@@ -175,4 +175,10 @@ public class PeekViewStub implements PeekView {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void drawOtherDigger(int x, int y) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -18,6 +18,7 @@ public abstract class FieldCreator {
     public abstract int getMaxLongitude();
     public abstract int getLineOfSightLength();
     public abstract int getNumberOfSides();
+    public abstract int getInitialTimerDuration();
     
     public static final Square b() {
         return new BankSquare();

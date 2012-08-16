@@ -105,6 +105,8 @@ public class Peek {
 			peekView.drawTeleport(x, y);
 		} else if(srep.equals("f")){
 			peekView.drawForest(x, y);
+		} else if(srep.equals("o")){
+			peekView.drawOtherDigger(x, y);
 		} else {
 			peekView.drawEmpty(x,y);
 		}

@@ -7,7 +7,9 @@ import java.util.Map;
 
 import com.agical.golddigger.model.event.GolddiggerNotifier;
 import com.agical.golddigger.model.fieldcreator.FieldCreator;
+import com.agical.golddigger.model.tiles.OtherDiggerSquare;
 import com.agical.jambda.Functions.Fn0;
+import com.agical.golddigger.model.tiles.Square;
 
 
 public class Diggers {
@@ -15,6 +17,11 @@ public class Diggers {
     private Map<Digger, FieldCreator> diggersFieldCreator = new HashMap<Digger, FieldCreator>();
     private final GolddiggerNotifier golddiggerNotifier;
 	private final Fn0<FieldCreator> fieldCreatorFactory;
+	
+	private boolean multiplayer = false;    
+    private Square[][] OriginalMultiplayerGoldField;
+    private GoldField CurrentMultiplayerGoldField;
+    private boolean multiplayerMapStored = false;
     
     public Diggers(Fn0<FieldCreator> fieldCreatorFactory) {
         this.fieldCreatorFactory = fieldCreatorFactory;
@@ -45,6 +52,15 @@ public class Diggers {
         digger.newGame(goldField);
         
         golddiggerNotifier.newGame(digger, goldField);
+        
+        
+        
+        if (!multiplayerMapStored) {
+        	
+        	OriginalMultiplayerGoldField = goldField.getSquares();	        
+	        CurrentMultiplayerGoldField = goldField;
+	        multiplayerMapStored = true;
+        }
     }
 
     public Digger getDigger(String secretName) {
@@ -58,6 +74,29 @@ public class Diggers {
 
     public List<Digger> getDiggers() {
         return diggers;
+    }
+    
+    public void updateGoldFields() {
+    	
+		for(Digger digger : diggers){
+			//sets the field to default tiles defined previously to avoid redrawing of digger tiles
+			CurrentMultiplayerGoldField.setField(OriginalMultiplayerGoldField);
+			for(Digger otherDigger : diggers){
+				if(!digger.equals(otherDigger)){					
+					CurrentMultiplayerGoldField.setSquare(otherDigger.getPosition(), new OtherDiggerSquare());					
+				}
+			}
+			digger.setGoldField(CurrentMultiplayerGoldField.getSquares());
+		}
+		
+	}
+    
+    public void setMultiplayer(boolean multi) {
+    	multiplayer = multi;
+    }
+    
+    public boolean getMultiplayer() {
+    	return multiplayer;
     }
 
     

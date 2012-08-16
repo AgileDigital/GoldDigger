@@ -42,6 +42,10 @@ public class TestFindingGold {
             return 1;
         }
         
+        public int getInitialTimerDuration() {
+            return 0;
+        }
+        
     }
 
     @Before

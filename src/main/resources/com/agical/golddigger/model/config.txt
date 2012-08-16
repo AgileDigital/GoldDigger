@@ -1,0 +1,2 @@
+# !attribute_name=attribute_value   [Hash is comment, leading and ending white space is ignored, attribute delimiter is exclamation]
+!game_mode=multiplayer

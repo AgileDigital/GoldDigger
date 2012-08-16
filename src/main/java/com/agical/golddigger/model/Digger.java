@@ -37,6 +37,8 @@ public class Digger {
     };
     private static final int CARRYING_LIMITATION = 3;
     
+    private boolean hasBankTile = false;
+    
     public Digger(String name, String secretName) {
         super();
         this.name = name;
@@ -189,6 +191,18 @@ public class Digger {
     public GoldField getGoldField() {
         return goldField;
     }
+    
+    /**
+     * In a multiplayer game while each digger has its own
+     * GoldField object, there is a global GoldField that
+     * represents diggers as tile types and every time a digger
+     * executes a command all the other digger's GoldField objects
+     * are updated to show them the positions of the new diggers.
+     * @param squares
+     */
+	public void setGoldField(Square[][] squares) {
+		this.goldField.setField(squares);
+	}
 
 
     public void grab() {
@@ -199,6 +213,14 @@ public class Digger {
 
     public void drop() {
         Position.square.apply(getPosition(), goldField).dropBy(this);
+    }
+    
+    public void setHasBankTile(boolean has_bank) {
+    	hasBankTile = has_bank;
+    }
+    
+    public boolean hasBankTile() {
+    	return hasBankTile;
     }
     
 

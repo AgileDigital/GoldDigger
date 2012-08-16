@@ -4,23 +4,74 @@
 package com.agical.golddigger.server;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.agical.golddigger.model.ConfigReader;
 import com.agical.golddigger.model.Digger;
 import com.agical.golddigger.model.Diggers;
 import com.agical.golddigger.model.Position;
 import com.agical.jambda.Functions;
 
+import com.agical.golddigger.model.GoldField;
+import com.agical.golddigger.model.fieldcreator.StringFieldCreator;
+import com.agical.golddigger.model.tiles.BankSquare;
+import com.agical.golddigger.model.tiles.HillSquare;
+import com.agical.golddigger.model.tiles.Square;
+import com.agical.golddigger.model.tiles.WallSquare;
+
+
 public class PathExecutor {
     private final Diggers diggers;
     private final Writer log;
-    
-    public PathExecutor(Diggers diggers, Writer log) {
+	private boolean multiplayer = false;
+
+	public PathExecutor(Diggers diggers, Writer log) {
         super();
         this.diggers = diggers;
+                
         this.log = log;
+        try {
+        	readConfig();
+        }  catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
+    }
+    
+
+    
+    
+    public void readConfig() throws IOException {
+    	
+    	String fileName = "config.txt";
+    	String fileContent = "";
+    	
+    	try {
+    		fileContent = ConfigReader.read(fileName);
+    	}  catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    	 	   	
+    	String[] lines = fileContent.split("\n");    	
+    	String game_mode = "singleplayer";
+
+        for (String line : lines) {        	
+            if (line.startsWith("!game_mode")) {
+                String[] parts = line.split("=");
+                if (parts.length == 2) {
+                    game_mode = parts[1].trim();         
+                    
+                }
+            }
+        }
+        
+        if (game_mode.contains("multiplayer")) multiplayer = true;
+        
     }
     
     public void executePath(String pathInfo, PrintWriter writer) {
@@ -53,6 +104,7 @@ public class PathExecutor {
         String action = splitPath[2];
         Digger digger = diggers.getDigger(secretName);
         int numberOfSides = digger.getGoldField().getNumberOfSides();
+        
         try {
             if (action.equals("view")) {
                 writer.write(digger.getView());
@@ -81,7 +133,7 @@ public class PathExecutor {
                     writer.write("FAILED\n");
                 } else {
                     writer.write("OK\n");
-                    diggers.newGame(digger);
+                    diggers.newGame(digger);                    
                 }
             }
             if (action.equals("move")) {
@@ -132,11 +184,35 @@ public class PathExecutor {
                 else{
                 	writer.write("Cannot Move in that direction");
                 }
+                
+                // every command will update all the diggers
+                // fields in a multiplayer game
+                if (multiplayer) diggers.updateGoldFields();
+                
             }
         } catch (Exception e) {
             throw new RuntimeException(digger.toString(), e);
         }
+        
     }
+    
+     /**
+     * Updates the diggers' maps to comply with the master map and account for other diggers.
+     * @param multiplayerdiggers
+     */
+    /*private void updateGoldFields() {
+		for(Digger digger : diggers.getDiggers()){
+			//sets the field to default tiles defined previously to avoid redrawing of digger tiles
+			CurrentMultiplayerGoldField.setField(OrigianlMultiplayerGoldField.getSquares());
+			for(Digger otherDigger : diggers.getDiggers()){
+				if(!digger.equals(otherDigger)){					
+					CurrentMultiplayerGoldField.setSquare(otherDigger.getPosition(), new HillSquare());					
+				}
+			}
+			digger.setGoldField(CurrentMultiplayerGoldField.getSquares());
+		}
+		
+	}*/
     
     public void restoreFromLog(Reader reader) {
         try {
@@ -174,5 +250,9 @@ public class PathExecutor {
         } catch (Exception e) {
             throw new RuntimeException("logRow is:" + logRow, e);
         }
+    }
+    
+    public void setMultiplayer(boolean multi) {
+    	multiplayer = multi;
     }
 }

@@ -68,6 +68,7 @@ public class GraphicsPeekView implements PeekView {
 	private static Image ROAD;
 	private static Image SHALLOW_WATER;
 	private static Image TELEPORT;
+	private static Image OTHER_DIGGER;
 	
 
 	
@@ -95,6 +96,7 @@ public class GraphicsPeekView implements PeekView {
 			ROAD = loadImage("road.png");
 			SHALLOW_WATER = loadImage("shallow_water.png");
 			TELEPORT = loadImage("teleport.png");
+			OTHER_DIGGER = loadImage("other_digger_square.png");
 			golds = new Image[]{GOLD1, GOLD2, GOLD3, GOLD4, GOLD5, GOLD6, GOLD7, GOLD8, GOLD9};
 			  W_CENTER =  loadImage("center.png");
 			  SOLID =  loadImage("solid.png");
@@ -124,6 +126,7 @@ public class GraphicsPeekView implements PeekView {
 			ROAD = loadImage("hex_road.png");
 			SHALLOW_WATER = loadImage("hex_shallow_water.png");
 			TELEPORT = loadImage("hex_teleport.png");
+			OTHER_DIGGER = loadImage("other_digger_hex.png");
 			golds = new Image []{HEXGOLD1, HEXGOLD2, HEXGOLD3, HEXGOLD4, HEXGOLD5, HEXGOLD6, HEXGOLD7, HEXGOLD8, HEXGOLD9};
 			  W_CENTER = loadImage("hexWall.png");
 			  SOLID = hexImage2;
@@ -285,5 +288,11 @@ public class GraphicsPeekView implements PeekView {
     public void drawForest(int x, int y) {
     	drawImage(x, y, FOREST);
     }
+    
+    @Override
+    public void drawOtherDigger(int x, int y) {
+    	drawImage(x, y, OTHER_DIGGER);
+    }
+
 
 }

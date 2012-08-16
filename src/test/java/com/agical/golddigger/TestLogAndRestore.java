@@ -38,9 +38,12 @@ public class TestLogAndRestore {
     public void restoreFromLog() throws Exception {
         Reader reader = new InputStreamReader(getClass().getResourceAsStream("calls.log"), "UTF-8");
         PathExecutor executor = new PathExecutor(diggers, new VoidWriter());
+        executor.setMultiplayer(false);
         executor.restoreFromLog(reader);
+        
         assertEquals(4, diggers.getDiggers().size());
         Digger digger = diggers.getDiggers().get(0);
+        System.out.println(digger.getGoldField());
         assertEquals(3, digger.getGoldInTheBank());
         assertEquals(0, digger.getCarriedGold());
     }
